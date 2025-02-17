@@ -12,7 +12,7 @@ def main_start_inline_kb():
 
 def payments_inline_kb():
     inline_kb_list = [
-        [InlineKeyboardButton(text='Добавить платеж', callback_data='-'),
+        [InlineKeyboardButton(text='Добавить платеж', callback_data='new_payment_call'),
          InlineKeyboardButton(text='Мои платежи', callback_data='-')],
         [InlineKeyboardButton(text='Изменить данные', callback_data='-'),
          InlineKeyboardButton(text='В главное меню ⬅️', callback_data='back_main')]
