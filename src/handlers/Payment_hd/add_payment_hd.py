@@ -3,12 +3,10 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
-from datetime import date
-
 from src.create_bot import bot
 from src.db.Payments.add_payments_db import add_payment
 from src.keyboards.inline_kb.main_kb import main_start_inline_kb
-from src.utils.check_fn import check_date_format
+from src.utils.check_fn import check_dey_format
 
 add_payment_router = Router()
 
@@ -28,22 +26,26 @@ async def call_add_payment(call: CallbackQuery, state: FSMContext):
 async def accept_name_payment(m: Message, state: FSMContext):
     await state.update_data(name_payment=m.text)
     await state.set_state(FormAddPayment.cost_payment)
-    await m.answer(text='Введи цену вашей подписки')
+    await m.answer(text='Введи цену вашей подписки (в рублях)')
 
 
 @add_payment_router.message(FormAddPayment.cost_payment)
 async def accept_cost(m: Message, state: FSMContext):
+    if not m.text.isdigit():
+        await m.answer(text='Некорректно указана цена, попробуйте еще раз')
+        await state.set_state(FormAddPayment.cost_payment)
+        return
     await state.update_data(cost_payment=m.text)
     await state.set_state(FormAddPayment.date_payment)
-
     await m.answer(text=f'Напиши число оплаты')
 
 @add_payment_router.message(FormAddPayment.date_payment)
 async def accept_date(m: Message, state: FSMContext):
     date_pay = m.text
-    if not check_date_format(date_pay):
+    if not check_dey_format(date_pay):
         await m.answer(text='Вы ввели не корректное число, попробуйте еще раз')
         await state.set_state(FormAddPayment.date_payment)
+        return
     info = await state.get_data()
     name_pay = info.get('name_payment')
     cost_pay = info.get('cost_payment')

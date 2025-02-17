@@ -24,9 +24,10 @@ class Notice(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('Users.id'))
-    day_before = Column(Date)
+    name_notice = Column(String)
+    day_before = Column(Integer)
     time_send = Column(Time)
-    periodicity = Column(Time)
+    period = Column(Time, default=None)
 
 
 class Payment(Base):

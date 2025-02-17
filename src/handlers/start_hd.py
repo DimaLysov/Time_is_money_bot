@@ -1,6 +1,7 @@
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
+from aiogram.fsm.context import FSMContext
 
 from src.create_bot import bot
 from src.db.Users.user_regisration_db import registration
@@ -10,7 +11,8 @@ start_router = Router()
 
 
 @start_router.message(Command('start'))
-async def cmd_start(m: Message):
+async def cmd_start(m: Message, state):
+    await state.clear()
     answer = await registration(m.from_user.id, m.from_user.username)
     if answer:
         await m.answer(text='Добро пожаловать и так далее...\n'

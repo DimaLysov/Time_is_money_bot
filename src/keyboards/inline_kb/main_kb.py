@@ -22,7 +22,7 @@ def payments_inline_kb():
 
 def notice_inline_kb():
     inline_kb_list = [
-        [InlineKeyboardButton(text='Добавить уведомление', callback_data='-'),
+        [InlineKeyboardButton(text='Добавить уведомление', callback_data='new_notice_call'),
          InlineKeyboardButton(text='Мои уведомления', callback_data='-')],
         [InlineKeyboardButton(text='Изменить данные', callback_data='-'),
          InlineKeyboardButton(text='В главное меню ⬅️', callback_data='back_main')]
