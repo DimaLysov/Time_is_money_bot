@@ -1,6 +1,5 @@
 from sqlalchemy import select, and_
 
-
 from src.db.models import async_session
 from src.db.models import User
 

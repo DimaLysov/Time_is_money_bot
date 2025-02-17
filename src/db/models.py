@@ -19,25 +19,25 @@ class User(Base):
     user_name = Column(String)
 
 
-class Notification(Base):
-    __tablename__ = 'Notifications'
+class Notice(Base):
+    __tablename__ = 'Notices'
 
     id = Column(Integer, primary_key=True)
-    id_user = Column(Integer, ForeignKey('Users.id'))
+    user_id = Column(Integer, ForeignKey('Users.id'))
     day_before = Column(Date)
     time_send = Column(Time)
     periodicity = Column(Time)
 
 
-class DataSub(Base):
-    __tablename__ = 'Data_subs'
+class Payment(Base):
+    __tablename__ = 'Payments'
 
     id = Column(Integer, primary_key=True)
-    id_user = Column(Integer, ForeignKey('Users.id'))
-    id_notifications = Column(Integer, ForeignKey('Notifications.id'))
-    name_subs = Column(String)
-    cost_subs = Column(Integer)
-    payment_date = Column(Date)
+    user_id = Column(Integer, ForeignKey('Users.id'))
+    notifications_id = Column(Integer, ForeignKey('Notices.id'), default=None)
+    name_payment = Column(String)
+    cost_payment = Column(Integer)
+    payment_date = Column(Integer)
 
 
 async def async_main():
