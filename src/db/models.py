@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, String, ForeignKey, Column, Integer, Date, Time
+from sqlalchemy import BigInteger, String, ForeignKey, Column, Integer, Date, Time, Boolean
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from src.config import DATABASE_URL
@@ -28,6 +28,7 @@ class Notice(Base):
     day_before = Column(Integer)
     time_send = Column(Time)
     period = Column(Time, default=None)
+    status = Column(Boolean, default=False)
 
 
 class Payment(Base):
@@ -35,7 +36,7 @@ class Payment(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('Users.id'))
-    notifications_id = Column(Integer, ForeignKey('Notices.id'), default=None)
+    notice_id = Column(Integer, ForeignKey('Notices.id'), default=None)
     name_payment = Column(String)
     cost_payment = Column(Integer)
     payment_date = Column(Integer)
