@@ -3,6 +3,7 @@ import asyncio
 from create_bot import bot, dp
 from db.models import async_main
 from handlers import routers
+from src.worker import infinity_worker
 
 
 async def main():
@@ -10,7 +11,10 @@ async def main():
     for router in routers:
         dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    await asyncio.gather(
+        infinity_worker(),
+        dp.start_polling(bot)
+    )
 
 
 if __name__ == '__main__':
