@@ -10,6 +10,7 @@ from src.db.models import Notice
 
 async def add_notice(chat_id: int, day: int, time: str, period: str):
     user_id = await get_user_id(chat_id)
+    name_new_notice = f'за {day} д в {time}'
     time = datetime.strptime(time, "%H:%M").time()
     async with async_session() as session:
         notice = await session.scalar(select(Notice).filter(and_(
@@ -18,7 +19,6 @@ async def add_notice(chat_id: int, day: int, time: str, period: str):
             Notice.time_send == time
         )))
         if not notice:
-            name_new_notice = f'за {day} д в {time}'
             session.add(Notice(user_id=user_id,
                                name_notice=name_new_notice,
                                day_before=day,

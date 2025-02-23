@@ -1,0 +1,24 @@
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+
+
+def kb_list_data(list_data):
+    kb_list = []
+    for item in range(1, len(list_data), 2):
+        kb_list.append([KeyboardButton(text=list_data[item - 1]), KeyboardButton(text=list_data[item])])
+    if len(list_data) % 2 != 0:
+        kb_list.append([KeyboardButton(text=list_data[-1])])
+    keyboard = ReplyKeyboardMarkup(keyboard=kb_list, resize_keyboard=True)
+    return keyboard
+
+
+def kb_edit_delete():
+    kb_list = [[KeyboardButton(text='Изменить'), KeyboardButton(text='Удалить')]]
+    keyboard = ReplyKeyboardMarkup(keyboard=kb_list, resize_keyboard=True)
+    return keyboard
+
+
+def kb_all_payment_data():
+    kb_list = [[KeyboardButton(text='Название'), KeyboardButton(text='Стоимость')],
+               [KeyboardButton(text='Дата оплаты'), KeyboardButton(text='Уведомление')]]
+    keyboard = ReplyKeyboardMarkup(keyboard=kb_list, resize_keyboard=True)
+    return keyboard

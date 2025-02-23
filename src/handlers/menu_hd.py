@@ -6,9 +6,9 @@ from aiogram.fsm.context import FSMContext
 from src.create_bot import bot
 from src.keyboards.inline_kb.main_kb import main_start_inline_kb
 
-clear_router = Router()
+menu_router = Router()
 
-@clear_router.message(Command('clear'))
+@menu_router.message(Command('menu'))
 async def cmd_clear(m: Message, state: FSMContext):
     await state.clear()
     await m.answer(text='Выход...', reply_markup=ReplyKeyboardRemove())
