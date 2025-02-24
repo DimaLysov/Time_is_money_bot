@@ -22,3 +22,15 @@ def kb_all_payment_data():
                [KeyboardButton(text='Дата оплаты'), KeyboardButton(text='Уведомление')]]
     keyboard = ReplyKeyboardMarkup(keyboard=kb_list, resize_keyboard=True)
     return keyboard
+
+
+def kb_all_notice_data():
+    kb_list = [[KeyboardButton(text='За сколько дней'), KeyboardButton(text='Время')],
+               [KeyboardButton(text='Периодичность'), KeyboardButton(text='Сделать активным')]]
+    keyboard = ReplyKeyboardMarkup(keyboard=kb_list, resize_keyboard=True)
+    return keyboard
+
+def kb_notice_status():
+    kb_list = [[KeyboardButton(text='Сделать активным')]]
+    keyboard = ReplyKeyboardMarkup(keyboard=kb_list, resize_keyboard=True)
+    return keyboard

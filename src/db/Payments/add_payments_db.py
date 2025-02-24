@@ -15,9 +15,9 @@ async def add_payment(chat_id: int, name: str, cost: int, date: int):
             Payment.payment_date == date
         )))
         if not payment:
-            notice_id = await get_active_notice(chat_id)
+            notice = await get_active_notice(chat_id)
             session.add(Payment(user_id=user_id,
-                                notice_id=notice_id,
+                                notice_id=notice.id,
                                 name_payment=name,
                                 cost_payment=cost,
                                 payment_date=date))

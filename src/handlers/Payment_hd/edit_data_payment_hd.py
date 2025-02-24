@@ -5,11 +5,11 @@ from aiogram.fsm.context import FSMContext
 
 from src.create_bot import bot
 from src.db.Notice_db.get_all_notice_person import get_notice_user
-from src.db.Notice_db.get_notice_id_db import get_notice_id
+from src.db.Notice_db.get_notice_db import get_notice
 from src.db.Payments.check_avail_payment_db import check_payment
 from src.db.Payments.delete_payment_db import delete_payment
 from src.db.Payments.edit_payment_db import edit_name_payment
-from src.db.Payments.get_all_payment_person_db import get_payment_user
+from src.db.Payments.get_all_payment_person_db import get_payments_user
 from src.keyboards.inline_kb.main_kb import main_start_inline_kb
 from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data
 from src.utils.check_fn import check_dey_format
@@ -31,7 +31,7 @@ class FormEditPayment(StatesGroup):
 @edit_payment_router.callback_query(F.data == 'edit_payment_call')
 async def call_edit_payment(call: CallbackQuery, state: FSMContext):
     await bot.delete_message(call.from_user.id, call.message.message_id)
-    answer = await get_payment_user(call.from_user.id)
+    answer = await get_payments_user(call.from_user.id)
     if answer:
         list_payment = [payment['name_payment'] for payment in answer]
         await call.message.answer(text='Выберите платеж', reply_markup=kb_list_data(list_payment))
@@ -60,7 +60,7 @@ async def accept_select_act(m: Message, state: FSMContext):
         await state.set_state(FormEditPayment.select_edit_data)
     elif m.text == 'Удалить':
         await m.answer(text='Вы точно хотите удалить платеж?\n'
-                            '(Для подтверждения введите "да"', reply_markup=ReplyKeyboardRemove())
+                            '<i>(Для подтверждения введите "да"</i>)', reply_markup=ReplyKeyboardRemove())
         await state.set_state(FormEditPayment.verif_delete)
     else:
         await m.answer(text='Такое я не могу сделать, повторите выбор')
@@ -168,9 +168,9 @@ async def accept_new_cost_payment(m: Message, state: FSMContext):
 
 @edit_payment_router.message(FormEditPayment.new_notice_payment)
 async def accept_new_notice_payment(m: Message, state: FSMContext):
-    new_notice_id = await get_notice_id(m.from_user.id, m.text)
+    notice = await get_notice(m.from_user.id, m.text)
     # проверка
-    if new_notice_id is None:
+    if not notice:
         await m.answer(text='У вас нет такого уведомления, попробуйте еще раз')
         await state.set_state(FormEditPayment.new_notice_payment)
         return
@@ -179,7 +179,7 @@ async def accept_new_notice_payment(m: Message, state: FSMContext):
     name_payment = data.get('select_payment')
     select_edit_data = data.get('select_edit_data')
     # изменяем значения
-    answer = await edit_name_payment(m.from_user.id, name_payment, select_edit_data, new_notice_id)
+    answer = await edit_name_payment(m.from_user.id, name_payment, select_edit_data, notice.id)
     if answer:
         await m.answer(text='Вы успешно изменили уведомление',reply_markup=ReplyKeyboardRemove())
     else:

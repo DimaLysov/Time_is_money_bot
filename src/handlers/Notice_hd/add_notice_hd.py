@@ -62,7 +62,8 @@ async def accept_period(m: Message, state: FSMContext):
     info = await state.get_data()
     day_notice = info.get('day_notice')
     time_notice = info.get('time_notice')
-    answer = await add_notice(m.from_user.id, int(day_notice), time_notice, period_notice)
+    creator = 'user'
+    answer = await add_notice(m.from_user.id, int(day_notice), time_notice, period_notice, creator)
     if answer:
         await m.answer(text='Вы успешно добавили уведомление')
     else:

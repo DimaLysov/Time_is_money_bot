@@ -4,7 +4,7 @@ from src.db.Users.get_user_id_db import get_user_id
 from src.db.models import async_session
 from src.db.models import Payment, Notice
 
-async def get_payment_user(chat_id: int):
+async def get_payments_user(chat_id: int):
     user_id = await get_user_id(chat_id)
     async with async_session() as session:
         payments = await session.execute(select(Payment, Notice)

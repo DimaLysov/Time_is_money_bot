@@ -15,7 +15,8 @@ async def get_notice_user(chat_id: int):
                 {
                     'name_notice': notice.name_notice,
                     'day_before': notice.day_before,
-                    'time_send': notice.time_send
+                    'time_send': notice.time_send,
+                    'status': notice.status
                 }
                 for notice in notices
             ]

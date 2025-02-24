@@ -19,6 +19,7 @@ async def registration(chat_id: int, user_name: str):
             day = 1
             time = '12:00'
             period = '01:00'
-            await add_notice(chat_id, day, time, period)
+            creator = 'bot'
+            await add_notice(chat_id, day, time, period, creator)
             return True
         return False
