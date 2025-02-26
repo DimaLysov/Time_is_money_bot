@@ -8,7 +8,7 @@ from src.db.models import async_session
 from src.db.models import Notice
 
 
-async def add_notice(chat_id: int, day: int, time: str, period: str, creator: str):
+async def add_notice(chat_id: int, day: int, time: str, creator: str):
     user_id = await get_user_id(chat_id)
     name_new_notice = f'за {day} д в {time}'
     time = datetime.strptime(time, "%H:%M").time()
@@ -23,7 +23,6 @@ async def add_notice(chat_id: int, day: int, time: str, period: str, creator: st
                                name_notice=name_new_notice,
                                day_before=day,
                                time_send=time,
-                               period=None if period == '-' else datetime.strptime(period, "%H:%M").time(),
                                creator=creator))
             await session.commit()
             new_notice = await session.scalar(select(Notice).filter(and_(

@@ -9,7 +9,7 @@ from src.db.Notice_db.edit_notice_data_db import edit_notice_data
 from src.db.Notice_db.get_all_notice_person import get_notice_user
 from src.db.Notice_db.get_notice_db import get_notice
 from src.keyboards.inline_kb.main_kb import main_start_inline_kb
-from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_notice_data, kb_notice_status
+from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_notice_data
 from src.utils.check_fn import check_dey_format, check_time_format
 
 edit_notice_router = Router()
@@ -42,6 +42,7 @@ async def accept_select_notice(m: Message, state: FSMContext):
     if notice:
         if notice.creator == 'bot':
             await state.update_data(select_edit_data='Сделать активным')
+            await state.update_data(select_notice=m.text)
             await m.answer(text='У стандартного уведомления можно изменить статус\n'
                                 'Для подтверждения введите "да"', reply_markup=ReplyKeyboardRemove())
             await state.set_state(FormEditNotice.new_value)
@@ -71,7 +72,7 @@ async def accept_select_act(m: Message, state: FSMContext):
 
 @edit_notice_router.message(FormEditNotice.verif_delete)
 async def accept_verif_delete(m: Message, state: FSMContext):
-    if m.text == 'да':
+    if m.text.lower() == 'да':
         date = await state.get_data()
         name_notice = date.get('select_notice')
         answer = await delete_notice(m.from_user.id, name_notice)
@@ -93,11 +94,6 @@ async def accept_select_edit_data(m: Message, state: FSMContext):
         await state.set_state(FormEditNotice.new_value)
     elif m.text == 'Время':
         await m.answer(text='Введите новое время', reply_markup=ReplyKeyboardRemove())
-        await state.set_state(FormEditNotice.new_value)
-    elif m.text == 'Периодичность':
-        await m.answer(text='Введите периодичность с которой будет напоминать об оплате, пока вы не подтвердите платеж\n\n'
-                        '<i>Например - если нужно присылать раз в 45 минут, то вводите 00:45</i>\n\n'
-                        'Для пропуска введите "-"', reply_markup=ReplyKeyboardRemove())
         await state.set_state(FormEditNotice.new_value)
     elif m.text == 'Сделать активным':
         await m.answer(text='Для подтверждения введите "да"', reply_markup=ReplyKeyboardRemove())
@@ -131,15 +127,8 @@ async def accept_new_value(m: Message, state: FSMContext):
             await m.answer(text='Данные введены не корректно, попробуете еще раз')
             await state.set_state(FormEditNotice.new_value)
             return
-    elif select_edit_data == 'Периодичность':
-        if check_time_format(new_value) or new_value == '-':
-            answer = await edit_notice_data(m.from_user.id, name_notice, select_edit_data, new_value)
-        else:
-            await m.answer(text='Данные введены не корректно, попробуете еще раз')
-            await state.set_state(FormEditNotice.new_value)
-            return
     elif select_edit_data == 'Сделать активным':
-        if new_value == 'да':
+        if new_value.lower() == 'да':
             new_value = True
             answer = await edit_notice_data(m.from_user.id, name_notice, select_edit_data, new_value)
     # вывод

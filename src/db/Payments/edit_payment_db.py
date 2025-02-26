@@ -5,7 +5,7 @@ from src.db.models import async_session
 from src.db.models import Payment
 
 
-async def edit_name_payment(chat_id: int, now_name: str, edit_data: str, new_value):
+async def edit_date_payment(chat_id: int, now_name: str, edit_data: str, new_value):
     user_id = await get_user_id(chat_id)
     async with async_session() as session:
         payment = await session.scalar(select(Payment).filter(and_(

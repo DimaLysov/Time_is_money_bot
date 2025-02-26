@@ -8,10 +8,10 @@ from src.db.Notice_db.get_all_notice_person import get_notice_user
 from src.db.Notice_db.get_notice_db import get_notice
 from src.db.Payments.check_avail_payment_db import check_payment
 from src.db.Payments.delete_payment_db import delete_payment
-from src.db.Payments.edit_payment_db import edit_name_payment
+from src.db.Payments.edit_payment_db import edit_date_payment
 from src.db.Payments.get_all_payment_person_db import get_payments_user
 from src.keyboards.inline_kb.main_kb import main_start_inline_kb
-from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data
+from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data, kb_choice_notice
 from src.utils.check_fn import check_dey_format
 
 edit_payment_router = Router()
@@ -69,7 +69,7 @@ async def accept_select_act(m: Message, state: FSMContext):
 
 @edit_payment_router.message(FormEditPayment.verif_delete)
 async def check_verif_delete(m: Message, state: FSMContext):
-    if m.text == 'да':
+    if m.text.lower() == 'да':
         data = await state.get_data()
         payment = data.get('select_payment')
         answer = await delete_payment(m.from_user.id, payment)
@@ -98,7 +98,7 @@ async def accept_select_edit_data(m: Message, state: FSMContext):
     elif m.text == 'Уведомление':
         answer = await get_notice_user(m.from_user.id)
         list_notices = [notice['name_notice'] for notice in answer]
-        await m.answer(text='Выберете новое уведомление', reply_markup=kb_list_data(list_notices))
+        await m.answer(text='Выберете уведомление', reply_markup=kb_choice_notice(list_notices))
         await state.set_state(FormEditPayment.new_notice_payment)
     else:
         await m.answer(text='Не известные данные, попробуйте еще раз')
@@ -113,7 +113,7 @@ async def accept_new_name_payment(m: Message, state: FSMContext):
     name_payment = data.get('select_payment')
     select_edit_data = data.get('select_edit_data')
     # изменяем значения
-    answer = await edit_name_payment(m.from_user.id, name_payment, select_edit_data, new_name)
+    answer = await edit_date_payment(m.from_user.id, name_payment, select_edit_data, new_name)
     if answer:
         await m.answer(text='Вы успешно изменили имя')
     else:
@@ -135,7 +135,7 @@ async def accept_new_cost_payment(m: Message, state: FSMContext):
     name_payment = data.get('select_payment')
     select_edit_data = data.get('select_edit_data')
     # изменяем значения
-    answer = await edit_name_payment(m.from_user.id, name_payment, select_edit_data, new_cost)
+    answer = await edit_date_payment(m.from_user.id, name_payment, select_edit_data, new_cost)
     if answer:
         await m.answer(text='Вы успешно изменили стоимость')
     else:
@@ -157,7 +157,7 @@ async def accept_new_cost_payment(m: Message, state: FSMContext):
     name_payment = data.get('select_payment')
     select_edit_data = data.get('select_edit_data')
     # изменяем значения
-    answer = await edit_name_payment(m.from_user.id, name_payment, select_edit_data, new_date)
+    answer = await edit_date_payment(m.from_user.id, name_payment, select_edit_data, new_date)
     if answer:
         await m.answer(text='Вы успешно изменили дату')
     else:
@@ -168,6 +168,8 @@ async def accept_new_cost_payment(m: Message, state: FSMContext):
 
 @edit_payment_router.message(FormEditPayment.new_notice_payment)
 async def accept_new_notice_payment(m: Message, state: FSMContext):
+    if m.text == 'Добавить новое':
+        pass
     notice = await get_notice(m.from_user.id, m.text)
     # проверка
     if not notice:
@@ -179,7 +181,7 @@ async def accept_new_notice_payment(m: Message, state: FSMContext):
     name_payment = data.get('select_payment')
     select_edit_data = data.get('select_edit_data')
     # изменяем значения
-    answer = await edit_name_payment(m.from_user.id, name_payment, select_edit_data, notice.id)
+    answer = await edit_date_payment(m.from_user.id, name_payment, select_edit_data, notice.id)
     if answer:
         await m.answer(text='Вы успешно изменили уведомление',reply_markup=ReplyKeyboardRemove())
     else:

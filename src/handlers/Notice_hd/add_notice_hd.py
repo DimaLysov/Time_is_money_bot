@@ -16,7 +16,6 @@ add_notice_router = Router()
 class FormAddNotice(StatesGroup):
     day_notice = State()
     time_notice = State()
-    period_notice = State()
 
 
 @add_notice_router.callback_query(F.data == 'new_notice_call')
@@ -45,25 +44,11 @@ async def accept_time_notice(m: Message, state: FSMContext):
         await m.answer(text='Не корректно указано время, попробуйте еще раз')
         await state.set_state(FormAddNotice.time_notice)
         return
-    await state.update_data(time_notice=m.text)
-    await m.answer(text='Введите периодичность с которой будет напоминать об оплате, пока вы не подтвердите платеж\n\n'
-                        '<i>Например - если нужно присылать раз в 45 минут, то вводите 00:45</i>\n\n'
-                        'Для пропуска введите "-"')
-    await state.set_state(FormAddNotice.period_notice)
-
-
-@add_notice_router.message(FormAddNotice.period_notice)
-async def accept_period(m: Message, state: FSMContext):
-    period_notice = m.text
-    if not check_time_format(period_notice) and period_notice != '-':
-        await m.answer(text='Не корректно указано время, попробуйте еще раз')
-        await state.set_state(FormAddNotice.period_notice)
-        return
+    time_notice = m.text
     info = await state.get_data()
     day_notice = info.get('day_notice')
-    time_notice = info.get('time_notice')
     creator = 'user'
-    answer = await add_notice(m.from_user.id, int(day_notice), time_notice, period_notice, creator)
+    answer = await add_notice(m.from_user.id, int(day_notice), time_notice, creator)
     if answer:
         await m.answer(text='Вы успешно добавили уведомление')
     else:

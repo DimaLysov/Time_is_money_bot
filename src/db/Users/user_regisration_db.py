@@ -18,8 +18,7 @@ async def registration(chat_id: int, user_name: str):
             await session.commit()
             day = 1
             time = '12:00'
-            period = '01:00'
             creator = 'bot'
-            await add_notice(chat_id, day, time, period, creator)
+            await add_notice(chat_id, day, time, creator)
             return True
         return False

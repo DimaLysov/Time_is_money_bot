@@ -30,7 +30,7 @@ async def edit_notice_data(chat_id: int, name_notice: str, edit_data: str, new_v
                 Notice.user_id == user_id,
                 Notice.name_notice == name_notice
             )))
-            notice.name_notice = f'за {notice.day_before} д в {str(notice.time_send)}'
+            notice.name_notice = f'за {notice.day_before} д в {notice.time_send.strftime("%H:%M")}'
             await session.commit()
             return True
         return False
