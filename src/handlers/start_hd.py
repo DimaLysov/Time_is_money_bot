@@ -13,11 +13,10 @@ start_router = Router()
 @start_router.message(Command('start'))
 async def cmd_start(m: Message, state):
     await state.clear()
-    answer = await registration(m.from_user.id, m.from_user.username)
-    if answer:
-        await m.answer(text='Добро пожаловать и так далее...\n'
-                            'Ниже удобная панель навигации')
-    await m.answer(text='Панель навигации', reply_markup=main_start_inline_kb())
+    await registration(m.from_user.id, m.from_user.username)
+    await m.answer(text='Добро пожаловать.\n\n'
+                        'Данный бот поможет вам своевременно оплачивать ваши подписки и другие платежи\n\n'
+                        'Чтобы открыть меню бота нажмите сюда ️ 👉 <b>/menu</b>')
 
 
 @start_router.callback_query(F.data == 'main_payment')
