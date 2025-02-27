@@ -1,18 +1,21 @@
+from datetime import datetime
+
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
 from src.create_bot import bot
+from src.db.Notice_db.add_notice_db import add_notice
 from src.db.Notice_db.get_all_notice_person import get_notice_user
 from src.db.Notice_db.get_notice_db import get_notice
-from src.db.Payments.check_avail_payment_db import check_payment
+from src.db.Payments.get_payment_db import get_payment
 from src.db.Payments.delete_payment_db import delete_payment
 from src.db.Payments.edit_payment_db import edit_date_payment
 from src.db.Payments.get_all_payment_person_db import get_payments_user
 from src.keyboards.inline_kb.main_kb import main_start_inline_kb
 from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data, kb_choice_notice
-from src.utils.check_fn import check_dey_format
+from src.utils.check_fn import check_dey_format, check_time_format
 
 edit_payment_router = Router()
 
@@ -26,6 +29,8 @@ class FormEditPayment(StatesGroup):
     new_cost_payment = State()
     new_date_payment = State()
     new_notice_payment = State()
+    day_notice = State()
+    time_notice = State()
 
 
 @edit_payment_router.callback_query(F.data == 'edit_payment_call')
@@ -43,8 +48,8 @@ async def call_edit_payment(call: CallbackQuery, state: FSMContext):
 
 @edit_payment_router.message(FormEditPayment.select_payment)
 async def accept_select_payment(m: Message, state: FSMContext):
-    answer = await check_payment(m.from_user.id, m.text)
-    if answer:
+    payment = await get_payment(m.from_user.id, m.text)
+    if payment:
         await state.update_data(select_payment=m.text)
         await m.answer(text='Что вы хотите сделать?', reply_markup=kb_edit_delete())
         await state.set_state(FormEditPayment.select_act)
@@ -109,6 +114,11 @@ async def accept_select_edit_data(m: Message, state: FSMContext):
 async def accept_new_name_payment(m: Message, state: FSMContext):
     # собираем данные
     new_name = m.text
+    payment = await get_payment(m.from_user.id, new_name)
+    if payment:
+        await m.answer(text='Платеж с таким именем уже есть, попробуйте еще раз')
+        await state.set_state(FormEditPayment.new_name_payment)
+        return
     data = await state.get_data()
     name_payment = data.get('select_payment')
     select_edit_data = data.get('select_edit_data')
@@ -169,7 +179,11 @@ async def accept_new_cost_payment(m: Message, state: FSMContext):
 @edit_payment_router.message(FormEditPayment.new_notice_payment)
 async def accept_new_notice_payment(m: Message, state: FSMContext):
     if m.text == 'Добавить новое':
-        pass
+        await m.answer(text='Введите за сколько дней будет приходить уведомление\n\n'
+                            '<i>Например - если нужно присылать за два дня, то вводите 2</i>',
+                       reply_markup=ReplyKeyboardRemove())
+        await state.set_state(FormEditPayment.day_notice)
+        return
     notice = await get_notice(m.from_user.id, m.text)
     # проверка
     if not notice:
@@ -183,8 +197,52 @@ async def accept_new_notice_payment(m: Message, state: FSMContext):
     # изменяем значения
     answer = await edit_date_payment(m.from_user.id, name_payment, select_edit_data, notice.id)
     if answer:
-        await m.answer(text='Вы успешно изменили уведомление',reply_markup=ReplyKeyboardRemove())
+        await m.answer(text='Вы успешно изменили уведомление', reply_markup=ReplyKeyboardRemove())
     else:
         await m.answer(text='При изменении произошла ошибка', reply_markup=ReplyKeyboardRemove())
+    await state.clear()
+    await m.answer(text='Панель навигации', reply_markup=main_start_inline_kb())
+
+
+@edit_payment_router.message(FormEditPayment.day_notice)
+async def accept_day_notice(m: Message, state: FSMContext):
+    if m.text.isdigit():
+        if int(m.text) < 32:
+            await state.update_data(day_notice=m.text)
+            await m.answer(text=f'Введите время уведомления в формате час:минуты\n\n'
+                                f'<i>Например - {datetime.now().time().strftime("%H:%M")}</i>')
+            await state.set_state(FormEditPayment.time_notice)
+            return
+    await m.answer(text='Не корректно указан день, попробуйте еще раз')
+    await state.set_state(FormEditPayment.day_notice)
+
+
+@edit_payment_router.message(FormEditPayment.time_notice)
+async def accept_time_notice(m: Message, state: FSMContext):
+    if not check_time_format(m.text):
+        await m.answer(text='Не корректно указано время, попробуйте еще раз')
+        await state.set_state(FormEditPayment.time_notice)
+        return
+    time_notice = m.text
+    data = await state.get_data()
+    day_notice = data.get('day_notice')
+    creator = 'user'
+    answer_1 = await add_notice(m.from_user.id, int(day_notice), time_notice, creator)
+    if answer_1:
+        notice = await get_notice(m.from_user.id, f'за {day_notice} д в {time_notice}')
+        name_payment = data.get('select_payment')
+        select_edit_data = data.get('select_edit_data')
+        answer_2 = await edit_date_payment(m.from_user.id, name_payment, select_edit_data, notice.id)
+        if answer_2:
+            await m.answer(text='Вы успешно изменили уведомление', reply_markup=ReplyKeyboardRemove())
+        else:
+            await m.answer(text='При изменении произошла ошибка', reply_markup=ReplyKeyboardRemove())
+    else:
+        await m.answer(text='Такое уведомление уже есть')
+        answer_3 = await get_notice_user(m.from_user.id)
+        list_notices = [notice['name_notice'] for notice in answer_3]
+        await m.answer(text='Выберете уведомление', reply_markup=kb_choice_notice(list_notices))
+        await state.set_state(FormEditPayment.new_notice_payment)
+        return
     await state.clear()
     await m.answer(text='Панель навигации', reply_markup=main_start_inline_kb())

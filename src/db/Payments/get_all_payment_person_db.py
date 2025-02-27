@@ -1,4 +1,4 @@
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, asc
 
 from src.db.Users.get_user_id_db import get_user_id
 from src.db.models import async_session
@@ -11,13 +11,14 @@ async def get_payments_user(chat_id: int):
         .join(Notice, Payment.notice_id == Notice.id)
         .filter(and_(
             Payment.user_id == user_id
-        )))
+        ))
+        .order_by(asc(Payment.payment_date)))
         if payments:
             list_payments = [
                 {
                     'name_payment': payment.name_payment,
                     'cost_payment': payment.cost_payment,
-                    'pyment_date': payment.payment_date,
+                    'payment_date': payment.payment_date,
                     'name_notice': notice.name_notice
                 }
                 for payment, notice in payments

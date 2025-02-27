@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from src.create_bot import bot
 from src.db.Payments.add_payments_db import add_payment
+from src.db.Payments.get_payment_db import get_payment
 from src.keyboards.inline_kb.main_kb import main_start_inline_kb
 from src.utils.check_fn import check_dey_format
 
@@ -24,9 +25,15 @@ async def call_add_payment(call: CallbackQuery, state: FSMContext):
 
 @add_payment_router.message(FormAddPayment.name_payment)
 async def accept_name_payment(m: Message, state: FSMContext):
-    await state.update_data(name_payment=m.text)
-    await state.set_state(FormAddPayment.cost_payment)
-    await m.answer(text='Введи цену вашей подписки (в рублях)')
+    name_payment = m.text
+    payment = await get_payment(m.from_user.id, name_payment)
+    if not payment:
+        await state.update_data(name_payment=m.text)
+        await state.set_state(FormAddPayment.cost_payment)
+        await m.answer(text='Введи цену вашей подписки (в рублях)')
+    else:
+        await m.answer(text='Платеж с таким названием уже есть, попробуйте еще раз')
+        await state.set_state(FormAddPayment.name_payment)
 
 
 @add_payment_router.message(FormAddPayment.cost_payment)
@@ -37,7 +44,8 @@ async def accept_cost(m: Message, state: FSMContext):
         return
     await state.update_data(cost_payment=m.text)
     await state.set_state(FormAddPayment.date_payment)
-    await m.answer(text=f'Напиши число оплаты')
+    await m.answer(text=f'Напиши число оплаты\n'
+                        '<i>(Только сам день)</i>')
 
 @add_payment_router.message(FormAddPayment.date_payment)
 async def accept_date(m: Message, state: FSMContext):
@@ -53,6 +61,6 @@ async def accept_date(m: Message, state: FSMContext):
     if answer:
         await m.answer(text='Вы успешно добавили платеж')
     else:
-        await m.answer(text='Платеж с таким названием у вас уже есть')
+        await m.answer(text='При создании произошла ошибка')
     await state.clear()
     await m.answer(text='Панель навигации', reply_markup=main_start_inline_kb())

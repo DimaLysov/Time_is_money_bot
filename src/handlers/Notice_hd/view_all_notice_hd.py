@@ -13,11 +13,11 @@ async def call_view_notice(call: CallbackQuery):
     await bot.delete_message(call.from_user.id, call.message.message_id)
     answer = await get_notice_user(call.from_user.id)
     if answer is not None and answer:
-        text = ''
+        text = '<b>Все ваши уведомления</b>\n\n'
         for notice in answer:
-            text += f'{notice["name_notice"]}'
+            text += f'— {notice["name_notice"]}'
             if notice["status"]:
-                text += f' (активное)'
+                text += f' (<i>активное</i>)'
             text += '\n\n'
         await call.message.answer(text=text)
     else:

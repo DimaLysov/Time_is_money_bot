@@ -28,14 +28,15 @@ async def call_new_notice(call: CallbackQuery, state: FSMContext):
 
 @add_notice_router.message(FormAddNotice.day_notice)
 async def accept_day_notice(m: Message, state: FSMContext):
-    if not check_dey_format(m.text):
-        await m.answer(text='Не корректно указан день, попробуйте еще раз')
-        await state.set_state(FormAddNotice.day_notice)
-        return
-    await state.update_data(day_notice=m.text)
-    await m.answer(text=f'Введите время уведомления в формате час:минуты\n\n'
-                        f'<i>Например - {datetime.now().time().strftime("%H:%M")}</i>')
-    await state.set_state(FormAddNotice.time_notice)
+    if m.text.isdigit():
+        if int(m.text) < 32:
+            await state.update_data(day_notice=m.text)
+            await m.answer(text=f'Введите время уведомления в формате час:минуты\n\n'
+                                f'<i>Например - {datetime.now().time().strftime("%H:%M")}</i>')
+            await state.set_state(FormAddNotice.time_notice)
+            return
+    await m.answer(text='Не корректно указан день, попробуйте еще раз')
+    await state.set_state(FormAddNotice.day_notice)
 
 
 @add_notice_router.message(FormAddNotice.time_notice)

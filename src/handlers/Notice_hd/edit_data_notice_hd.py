@@ -62,7 +62,8 @@ async def accept_select_act(m: Message, state: FSMContext):
         await state.set_state(FormEditNotice.select_edit_data)
     elif m.text == 'Удалить':
         await m.answer(
-            text='Вы точно хотите удалить уведомление. У всех платежей с данным уведомлением установиться стандартное уведомление\n'
+            text='Вы точно хотите удалить уведомление?\n\n'
+                 'У всех платежей с данным уведомлением установиться ваше активное уведомление\n\n'
                  '<i>Для подтверждения введите "да"</i>', reply_markup=ReplyKeyboardRemove())
         await state.set_state(FormEditNotice.verif_delete)
     else:
@@ -111,31 +112,40 @@ async def accept_new_value(m: Message, state: FSMContext):
     name_notice = data.get('select_notice')
     select_edit_data = data.get('select_edit_data')
     answer = False
+    check = False
     # проверка данных
     if select_edit_data == 'За сколько дней':
-        if check_dey_format(new_value):
-            new_value = int(new_value)
-            answer = await edit_notice_data(m.from_user.id, name_notice, select_edit_data, new_value)
-        else:
-            await m.answer(text='Данные введены не корректно, попробуете еще раз')
-            await state.set_state(FormEditNotice.new_value)
-            return
+        if new_value.isdigit():
+            if int(new_value) < 32:
+                new_value = int(new_value)
+                notice = await get_notice(m.from_user.id, f'за {new_value}{name_notice[4:]}')
+                if notice:
+                    await m.answer(text='Такое уведомление уже есть, попробуйте еще раз')
+                    await state.set_state(FormEditNotice.new_value)
+                    return
+                check = True
     elif select_edit_data == 'Время':
         if check_time_format(new_value):
-            answer = await edit_notice_data(m.from_user.id, name_notice, select_edit_data, new_value)
-        else:
-            await m.answer(text='Данные введены не корректно, попробуете еще раз')
-            await state.set_state(FormEditNotice.new_value)
-            return
+            notice = await get_notice(m.from_user.id, f'{name_notice[:8]} {new_value}')
+            if notice:
+                await m.answer(text='Такое уведомление уже есть, попробуйте еще раз')
+                await state.set_state(FormEditNotice.new_value)
+                return
+        check = True
     elif select_edit_data == 'Сделать активным':
         if new_value.lower() == 'да':
             new_value = True
-            answer = await edit_notice_data(m.from_user.id, name_notice, select_edit_data, new_value)
-    # вывод
-    if answer:
-        await m.answer(text='Вы успешно изменили данные')
+            check = True
+    if check:
+        answer = await edit_notice_data(m.from_user.id, name_notice, select_edit_data, new_value)
+        if answer:
+            await m.answer(text='Вы успешно изменили данные')
+        else:
+            await m.answer(text='Изменения не произошли')
     else:
-        await m.answer(text='Изменения не произошли')
+        await m.answer(text='Данные введены не корректно, попробуйте еще раз')
+        await state.set_state(FormEditNotice.new_value)
+        return
     await state.clear()
     await m.answer(text='Панель навигации', reply_markup=main_start_inline_kb())
 
