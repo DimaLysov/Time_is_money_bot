@@ -1,18 +1,27 @@
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, case
 
 from src.db.models import async_session
 from src.db.models import Payment, User, Notice
 
 
-async def get_data_time(now_day, now_time):
+async def get_data_time(now_day, now_time, days_in_month):
     async with async_session() as session:
         result = await session.execute(select(Payment, User, Notice)
         .join(User, Payment.user_id == User.id)
         .join(Notice, Payment.notice_id == Notice.id)
         .filter(and_(
-            Payment.payment_date - Notice.day_before == now_day,
-            Notice.time_send == now_time
-        )))
+                    case(
+                (Payment.payment_date > days_in_month, days_in_month),
+                        (Payment.payment_date <= Notice.day_before, days_in_month + Payment.payment_date),
+                        else_=Payment.payment_date) - Notice.day_before == now_day,
+                    Notice.time_send == now_time
+                    )
+                )
+        )
+        # .filter(and_(
+        #     Payment.payment_date - Notice.day_before == now_day,
+        #     Notice.time_send == now_time
+        # )))
 
         # Преобразуем ORM-объекты в списки словарей
         payment_dicts = [
