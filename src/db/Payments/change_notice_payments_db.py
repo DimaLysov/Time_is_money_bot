@@ -1,6 +1,5 @@
 from sqlalchemy import select, and_, update
 
-from src.db.Notice_db.get_active_notice_db import get_active_notice
 from src.db.Users.get_user_id_db import get_user_id
 from src.db.models import async_session
 from src.db.models import Payment

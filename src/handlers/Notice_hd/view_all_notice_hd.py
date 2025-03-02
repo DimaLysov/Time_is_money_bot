@@ -16,8 +16,8 @@ async def call_view_notice(call: CallbackQuery):
         text = '<b>Все ваши уведомления</b>\n\n'
         for notice in answer:
             text += f'— {notice["name_notice"]}'
-            if notice["status"]:
-                text += f' (<i>активное</i>)'
+            if notice["creator"] == 'bot':
+                text += f' (<i>стандартное</i>)'
             text += '\n\n'
         await call.message.answer(text=text)
     else:

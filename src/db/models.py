@@ -28,7 +28,6 @@ class Notice(Base):
     day_before = Column(Integer)
     time_send = Column(Time)
     #period = Column(Time, default=None)
-    status = Column(Boolean, default=False)
     creator = Column(String)
 
 

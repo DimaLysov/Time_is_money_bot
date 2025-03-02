@@ -17,7 +17,7 @@ async def infinity_worker():
             for data in answer:
                 print(data)
                 await bot.send_message(chat_id=data['chat_id'], text=f'<b>🔔Вам нужно оплатить:🔔</b>\n\n'
-                                                                     f'<b>Название:</b>{data["name_payment"]}\n\n'
+                                                                     f'<b>Название:</b> {data["name_payment"]}\n\n'
                                                                      f'<b>Сумма:</b> {data["cost_payment"]} рублей\n\n'
                                                                      f'<b>До</b> {data["pyment_date"]} числа')
         await asyncio.sleep(60 - datetime.now().second)

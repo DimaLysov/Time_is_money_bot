@@ -1,8 +1,14 @@
 import re
 
-def check_dey_format(date_str):
+def check_day_payment_format(date_str):
     if date_str.isdigit():
         if 1 <= int(date_str)  <= 31:
+            return True
+    return False
+
+def check_day_notice_format(date_str):
+    if date_str.isdigit():
+        if int(date_str) <= 28:
             return True
     return False
 

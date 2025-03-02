@@ -15,7 +15,7 @@ from src.db.Payments.edit_payment_db import edit_date_payment
 from src.db.Payments.get_all_payment_person_db import get_payments_user
 from src.keyboards.inline_kb.main_kb import main_start_inline_kb
 from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data, kb_choice_notice
-from src.utils.check_fn import check_dey_format, check_time_format
+from src.utils.check_fn import check_day_payment_format, check_time_format
 
 edit_payment_router = Router()
 
@@ -157,7 +157,7 @@ async def accept_new_cost_payment(m: Message, state: FSMContext):
 @edit_payment_router.message(FormEditPayment.new_date_payment)
 async def accept_new_cost_payment(m: Message, state: FSMContext):
     # проверка
-    if not check_dey_format(m.text):
+    if not check_day_payment_format(m.text):
         await m.answer(text='Некорректно указана дата, попробуйте еще раз')
         await state.set_state(FormEditPayment.new_date_payment)
         return

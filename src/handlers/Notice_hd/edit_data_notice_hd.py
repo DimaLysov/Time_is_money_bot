@@ -10,7 +10,7 @@ from src.db.Notice_db.get_all_notice_person import get_notice_user
 from src.db.Notice_db.get_notice_db import get_notice
 from src.keyboards.inline_kb.main_kb import main_start_inline_kb
 from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_notice_data
-from src.utils.check_fn import check_dey_format, check_time_format
+from src.utils.check_fn import check_time_format
 
 edit_notice_router = Router()
 
@@ -28,7 +28,7 @@ async def call_edit_notice(call: CallbackQuery, state: FSMContext):
     await bot.delete_message(call.from_user.id, call.message.message_id)
     answer = await get_notice_user(call.from_user.id)
     if answer:
-        list_notice = [notice['name_notice'] for notice in answer]
+        list_notice = [notice['name_notice'] for notice in answer if notice['creator'] != 'bot']
         await call.message.answer(text='Выберете уведомление', reply_markup=kb_list_data(list_notice))
         await state.set_state(FormEditNotice.select_notice)
     else:
@@ -40,13 +40,6 @@ async def call_edit_notice(call: CallbackQuery, state: FSMContext):
 async def accept_select_notice(m: Message, state: FSMContext):
     notice = await get_notice(m.from_user.id, m.text)
     if notice:
-        if notice.creator == 'bot':
-            await state.update_data(select_edit_data='Сделать активным')
-            await state.update_data(select_notice=m.text)
-            await m.answer(text='У стандартного уведомления можно изменить статус\n'
-                                'Для подтверждения введите "да"', reply_markup=ReplyKeyboardRemove())
-            await state.set_state(FormEditNotice.new_value)
-        else:
             await state.update_data(select_notice=m.text)
             await m.answer(text='Что вы хотите сделать?', reply_markup=kb_edit_delete())
             await state.set_state(FormEditNotice.select_act)
@@ -96,9 +89,6 @@ async def accept_select_edit_data(m: Message, state: FSMContext):
     elif m.text == 'Время':
         await m.answer(text='Введите новое время', reply_markup=ReplyKeyboardRemove())
         await state.set_state(FormEditNotice.new_value)
-    elif m.text == 'Сделать активным':
-        await m.answer(text='Для подтверждения введите "да"', reply_markup=ReplyKeyboardRemove())
-        await state.set_state(FormEditNotice.new_value)
     else:
         await m.answer(text='Не известные данные, попробуйте еще раз')
         await state.set_state(FormEditNotice.select_edit_data)
@@ -132,10 +122,6 @@ async def accept_new_value(m: Message, state: FSMContext):
                 await state.set_state(FormEditNotice.new_value)
                 return
         check = True
-    elif select_edit_data == 'Сделать активным':
-        if new_value.lower() == 'да':
-            new_value = True
-            check = True
     if check:
         answer = await edit_notice_data(m.from_user.id, name_notice, select_edit_data, new_value)
         if answer:

@@ -2,7 +2,6 @@ from datetime import datetime
 
 from sqlalchemy import select, and_
 
-from src.db.Notice_db.update_status_notice_db import update_status_notice
 from src.db.Users.get_user_id_db import get_user_id
 from src.db.models import async_session
 from src.db.models import Notice
@@ -25,11 +24,5 @@ async def add_notice(chat_id: int, day: int, time: str, creator: str):
                                time_send=time,
                                creator=creator))
             await session.commit()
-            new_notice = await session.scalar(select(Notice).filter(and_(
-                Notice.user_id == user_id,
-                Notice.name_notice == name_new_notice
-            )))
-            if new_notice.creator == 'bot':
-                await update_status_notice(chat_id, new_notice.name_notice)
             return True
         return False

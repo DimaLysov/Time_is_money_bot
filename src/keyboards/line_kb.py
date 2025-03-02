@@ -36,7 +36,6 @@ def kb_all_payment_data():
 
 
 def kb_all_notice_data():
-    kb_list = [[KeyboardButton(text='За сколько дней'), KeyboardButton(text='Время')],
-               [KeyboardButton(text='Сделать активным')]]
+    kb_list = [[KeyboardButton(text='За сколько дней'), KeyboardButton(text='Время')]]
     keyboard = ReplyKeyboardMarkup(keyboard=kb_list, resize_keyboard=True, input_field_placeholder='Выберите, что хотите изменить')
     return keyboard
