@@ -7,14 +7,14 @@ from aiogram.fsm.context import FSMContext
 
 from src.create_bot import bot
 from src.db.Notice_db.add_notice_db import add_notice
-from src.db.Notice_db.get_all_notice_person import get_notice_user
+from src.db.Notice_db.get_all_notices_person import get_notices_user
 from src.db.Notice_db.get_notice_db import get_notice
 from src.db.Payments.get_payment_db import get_payment
 from src.db.Payments.delete_payment_db import delete_payment
 from src.db.Payments.edit_payment_db import edit_date_payment
 from src.db.Payments.get_all_payment_person_db import get_payments_user
 from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
-from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data, kb_choice_notice
+from src.keyboards.line_kb.utils_line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data, kb_choice_notice
 from src.utils.check_fn import check_day_payment_format, check_time_format
 
 edit_payment_router = Router()
@@ -101,7 +101,7 @@ async def accept_select_edit_data(m: Message, state: FSMContext):
         await m.answer(text='Введите новую дату оплаты', reply_markup=ReplyKeyboardRemove())
         await state.set_state(FormEditPayment.new_date_payment)
     elif m.text == 'Уведомление':
-        answer = await get_notice_user(m.from_user.id)
+        answer = await get_notices_user(m.from_user.id)
         list_notices = [notice['name_notice'] for notice in answer]
         await m.answer(text='Выберете уведомление', reply_markup=kb_choice_notice(list_notices))
         await state.set_state(FormEditPayment.new_notice_payment)
@@ -239,7 +239,7 @@ async def accept_time_notice(m: Message, state: FSMContext):
             await m.answer(text='При изменении произошла ошибка', reply_markup=ReplyKeyboardRemove())
     else:
         await m.answer(text='Такое уведомление уже есть')
-        answer_3 = await get_notice_user(m.from_user.id)
+        answer_3 = await get_notices_user(m.from_user.id)
         list_notices = [notice['name_notice'] for notice in answer_3]
         await m.answer(text='Выберете уведомление', reply_markup=kb_choice_notice(list_notices))
         await state.set_state(FormEditPayment.new_notice_payment)

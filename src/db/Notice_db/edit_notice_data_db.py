@@ -19,8 +19,6 @@ async def edit_notice_data(chat_id: int, name_notice: str, edit_data: str, new_v
                 notice.day_before = new_value
             elif edit_data == 'Время':
                 notice.time_send = datetime.strptime(new_value, "%H:%M").time()
-            elif edit_data == 'Периодичность':
-                notice.period = None if new_value == '-' else datetime.strptime(new_value, "%H:%M").time()
             await session.commit()
             notice = await session.scalar(select(Notice).filter(and_(
                 Notice.user_id == user_id,

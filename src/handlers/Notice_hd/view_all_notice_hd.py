@@ -1,17 +1,16 @@
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery
 
-from src.create_bot import bot
-from src.db.Notice_db.get_all_notice_person import get_notice_user
+from src.db.Notice_db.get_all_notices_person import get_notices_user
 from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
 
 view_notice_router = Router()
 
 
 @view_notice_router.callback_query(F.data == 'view_notice_call')
-async def call_view_notice(call: CallbackQuery):
+async def call_view_notice(call: CallbackQuery, bot: Bot):
     await bot.delete_message(call.from_user.id, call.message.message_id)
-    answer = await get_notice_user(call.from_user.id)
+    answer = await get_notices_user(call.from_user.id)
     if answer is not None and answer:
         text = '<b>Все ваши уведомления</b>\n\n'
         for notice in answer:

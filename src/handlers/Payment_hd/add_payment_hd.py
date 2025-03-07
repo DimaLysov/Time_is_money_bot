@@ -7,12 +7,12 @@ from aiogram.fsm.context import FSMContext
 
 from src.create_bot import bot
 from src.db.Notice_db.add_notice_db import add_notice
-from src.db.Notice_db.get_all_notice_person import get_notice_user
+from src.db.Notice_db.get_all_notices_person import get_notices_user
 from src.db.Notice_db.get_notice_db import get_notice
 from src.db.Payments.add_payments_db import add_payment
 from src.db.Payments.get_payment_db import get_payment
 from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
-from src.keyboards.line_kb import kb_choice_notice
+from src.keyboards.line_kb.utils_line_kb import kb_choice_notice
 from src.utils.check_fn import check_day_payment_format, check_day_notice_format, check_time_format
 
 add_payment_router = Router()
@@ -61,7 +61,7 @@ async def accept_date(m: Message, state: FSMContext):
     date_pay = m.text
     if check_day_payment_format(date_pay):
         await state.update_data(date_payment=m.text)
-        notices = await get_notice_user(m.from_user.id)
+        notices = await get_notices_user(m.from_user.id)
         list_notices = [notice['name_notice'] for notice in notices]
         await m.answer(text='Выберете уведомление', reply_markup=kb_choice_notice(list_notices))
         await state.set_state(FormAddPayment.notice_payment)
@@ -132,7 +132,7 @@ async def accept_time_notice(m: Message, state: FSMContext):
                 await m.answer(text='При создании произошла ошибка', reply_markup=ReplyKeyboardRemove())
     else:
         await m.answer(text='Такое уведомление уже есть')
-        notices = await get_notice_user(m.from_user.id)
+        notices = await get_notices_user(m.from_user.id)
         list_notices = [notice['name_notice'] for notice in notices]
         await m.answer(text='Выберете уведомление', reply_markup=kb_choice_notice(list_notices))
         await state.set_state(FormAddPayment.notice_payment)
