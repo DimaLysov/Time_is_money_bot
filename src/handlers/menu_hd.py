@@ -4,7 +4,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
 from src.create_bot import bot
-from src.keyboards.inline_kb.main_kb import main_start_inline_kb
+from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
 
 menu_router = Router()
 

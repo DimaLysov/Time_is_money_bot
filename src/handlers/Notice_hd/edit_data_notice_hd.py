@@ -8,7 +8,7 @@ from src.db.Notice_db.delete_notice_db import delete_notice
 from src.db.Notice_db.edit_notice_data_db import edit_notice_data
 from src.db.Notice_db.get_all_notice_person import get_notice_user
 from src.db.Notice_db.get_notice_db import get_notice
-from src.keyboards.inline_kb.main_kb import main_start_inline_kb
+from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
 from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_notice_data
 from src.utils.check_fn import check_time_format
 

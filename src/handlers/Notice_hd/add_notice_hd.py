@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 
 from src.create_bot import bot
 from src.db.Notice_db.add_notice_db import add_notice
-from src.keyboards.inline_kb.main_kb import main_start_inline_kb
+from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
 from src.utils.check_fn import check_time_format
 
 add_notice_router = Router()

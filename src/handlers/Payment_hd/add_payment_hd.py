@@ -11,7 +11,7 @@ from src.db.Notice_db.get_all_notice_person import get_notice_user
 from src.db.Notice_db.get_notice_db import get_notice
 from src.db.Payments.add_payments_db import add_payment
 from src.db.Payments.get_payment_db import get_payment
-from src.keyboards.inline_kb.main_kb import main_start_inline_kb
+from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
 from src.keyboards.line_kb import kb_choice_notice
 from src.utils.check_fn import check_day_payment_format, check_day_notice_format, check_time_format
 

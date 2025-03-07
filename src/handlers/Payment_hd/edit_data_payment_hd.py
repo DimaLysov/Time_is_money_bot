@@ -13,7 +13,7 @@ from src.db.Payments.get_payment_db import get_payment
 from src.db.Payments.delete_payment_db import delete_payment
 from src.db.Payments.edit_payment_db import edit_date_payment
 from src.db.Payments.get_all_payment_person_db import get_payments_user
-from src.keyboards.inline_kb.main_kb import main_start_inline_kb
+from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
 from src.keyboards.line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data, kb_choice_notice
 from src.utils.check_fn import check_day_payment_format, check_time_format
 

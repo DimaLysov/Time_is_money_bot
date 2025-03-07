@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery
 
 from src.create_bot import bot
 from src.db.Notice_db.get_all_notice_person import get_notice_user
-from src.keyboards.inline_kb.main_kb import main_start_inline_kb
+from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
 
 view_notice_router = Router()
 

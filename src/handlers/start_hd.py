@@ -1,11 +1,10 @@
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
-from aiogram.fsm.context import FSMContext
 
 from src.create_bot import bot
 from src.db.Users.user_regisration_db import registration
-from src.keyboards.inline_kb.main_kb import main_start_inline_kb, payments_inline_kb, notice_inline_kb
+from src.keyboards.inline_kb.menu_kb import main_start_inline_kb, payments_inline_kb, notice_inline_kb
 
 start_router = Router()
 
