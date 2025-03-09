@@ -8,7 +8,7 @@ from src.db.models import Notice
 class ExistsNoticeFilter(BaseFilter):
     async def __call__(self, m: Message) -> bool | dict[str, Notice]:
         if not m.text is None:
-            notice = await get_notice(m.from_user.id, m.text)
+            notice = await get_notice(m.from_user.id, name_notice=m.text)
             if notice:
                 return {'notice': notice}
         return False

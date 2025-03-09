@@ -11,14 +11,14 @@ async def add_payment(chat_id: int, notice_id: int, name: str, cost: int, date: 
             Payment.user_id == user_id,
             Payment.name_payment == name,
             Payment.cost_payment == cost,
-            Payment.payment_date == date
+            Payment.payment_day == date
         )))
         if not payment:
             session.add(Payment(user_id=user_id,
                                 notice_id=notice_id,
                                 name_payment=name,
                                 cost_payment=cost,
-                                payment_date=date))
+                                payment_day=date))
             await session.commit()
             return True
         return False

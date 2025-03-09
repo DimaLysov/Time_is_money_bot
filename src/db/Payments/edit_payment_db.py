@@ -17,8 +17,8 @@ async def edit_date_payment(chat_id: int, now_name: str, edit_data: str, new_val
                 payment.name_payment = new_value
             elif edit_data == 'Стоимость':
                 payment.cost_payment = new_value
-            elif edit_data == 'Дата оплаты':
-                payment.payment_date = new_value
+            elif edit_data == 'День оплаты':
+                payment.payment_day = new_value
             elif edit_data == 'Уведомление':
                 payment.notice_id = new_value
             await session.commit()

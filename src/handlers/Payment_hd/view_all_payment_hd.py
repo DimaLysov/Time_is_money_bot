@@ -17,7 +17,7 @@ async def call_view_payment(call: CallbackQuery):
         number = 1
         for payment in answer:
             text += (
-                f"— <b>{payment['name_payment']}</b> - {payment['cost_payment']}р, {payment['payment_date']} число (<i>присылать {payment['name_notice']}</i>)\n\n")
+                f"<b>· {payment['name_payment']}</b>:  {payment['cost_payment']}р, {payment['payment_day']} число (<i>уведомлять {payment['name_notice']}</i>)\n\n")
             number += 1
         await call.message.answer(text=text)
     else:

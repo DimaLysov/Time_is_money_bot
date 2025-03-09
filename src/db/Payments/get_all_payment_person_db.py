@@ -12,13 +12,13 @@ async def get_payments_user(chat_id: int):
         .filter(and_(
             Payment.user_id == user_id
         ))
-        .order_by(asc(Payment.payment_date)))
+        .order_by(asc(Payment.payment_day)))
         if payments:
             list_payments = [
                 {
                     'name_payment': payment.name_payment,
                     'cost_payment': payment.cost_payment,
-                    'payment_date': payment.payment_date,
+                    'payment_day': payment.payment_day,
                     'name_notice': notice.name_notice
                 }
                 for payment, notice in payments

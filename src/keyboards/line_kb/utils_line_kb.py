@@ -30,7 +30,7 @@ def kb_edit_delete():
 
 def kb_all_payment_data():
     kb_list = [[KeyboardButton(text='Название'), KeyboardButton(text='Стоимость')],
-               [KeyboardButton(text='Дата оплаты'), KeyboardButton(text='Уведомление')]]
+               [KeyboardButton(text='День оплаты'), KeyboardButton(text='Уведомление')]]
     keyboard = ReplyKeyboardMarkup(keyboard=kb_list, resize_keyboard=True, input_field_placeholder='Выберите, что хотите изменить')
     return keyboard
 

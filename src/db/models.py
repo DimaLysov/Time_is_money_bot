@@ -39,7 +39,7 @@ class Payment(Base):
     notice_id = Column(Integer, ForeignKey('Notices.id'), default=None)
     name_payment = Column(String)
     cost_payment = Column(Integer)
-    payment_date = Column(Integer)
+    payment_day = Column(Integer)
 
 
 async def async_main():

@@ -10,21 +10,20 @@ from src.db.Notice_db.add_notice_db import add_notice
 from src.db.Notice_db.get_all_notices_person import get_notices_user
 from src.db.Notice_db.get_notice_db import get_notice
 from src.db.Payments.add_payments_db import add_payment
-from src.db.Payments.get_payment_db import get_payment
+from src.db.models import Notice
+from src.filters.cost_payment_filter import CostPaymentFilter
+from src.filters.day_payment_filter import DayPaymentFilter
+from src.filters.exists_notice_filter import ExistsNoticeFilter
+from src.filters.exists_payment_filter import ExistsPaymentFilter
+from src.filters.not_none_filter import NotNoneFilter
+from src.filters.time_notice_filter import TimeNoticeFilter
+from src.handlers.Notice_hd.add_notice_hd import request_day_before
 from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
 from src.keyboards.line_kb.utils_line_kb import kb_choice_notice
-from src.utils.check_fn import check_day_payment_format, check_day_notice_format, check_time_format
+from src.states.all_states import FormAddPayment
 
 add_payment_router = Router()
 
-
-class FormAddPayment(StatesGroup):
-    name_payment = State()
-    cost_payment = State()
-    date_payment = State()
-    notice_payment = State()
-    day_notice = State()
-    time_notice = State()
 
 @add_payment_router.callback_query(F.data == 'new_payment_call')
 async def call_add_payment(call: CallbackQuery, state: FSMContext):
@@ -32,110 +31,89 @@ async def call_add_payment(call: CallbackQuery, state: FSMContext):
     await call.message.answer(text='Введите название нового платежа')
     await state.set_state(FormAddPayment.name_payment)
 
-@add_payment_router.message(FormAddPayment.name_payment)
+
+@add_payment_router.message(FormAddPayment.name_payment, NotNoneFilter(), ~ExistsPaymentFilter())
 async def accept_name_payment(m: Message, state: FSMContext):
-    name_payment = m.text
-    payment = await get_payment(m.from_user.id, name_payment)
-    if not payment:
-        await state.update_data(name_payment=m.text)
-        await state.set_state(FormAddPayment.cost_payment)
-        await m.answer(text='Введи цену вашей подписки (в рублях)')
-    else:
-        await m.answer(text='Платеж с таким названием уже есть, попробуйте еще раз')
-        await state.set_state(FormAddPayment.name_payment)
+    await state.update_data(name_payment=m.text)
+    await state.set_state(FormAddPayment.cost_payment)
+    await m.answer(text='Введи цену вашей подписки (в рублях)')
 
 
-@add_payment_router.message(FormAddPayment.cost_payment)
+@add_payment_router.message(FormAddPayment.cost_payment, CostPaymentFilter())
 async def accept_cost(m: Message, state: FSMContext):
-    if not m.text.isdigit():
-        await m.answer(text='Некорректно указана цена, попробуйте еще раз')
-        await state.set_state(FormAddPayment.cost_payment)
-        return
     await state.update_data(cost_payment=m.text)
-    await state.set_state(FormAddPayment.date_payment)
+    await state.set_state(FormAddPayment.day_payment)
     await m.answer(text=f'Напиши число оплаты\n'
                         '<i>(Только сам день)</i>')
 
-@add_payment_router.message(FormAddPayment.date_payment)
-async def accept_date(m: Message, state: FSMContext):
-    date_pay = m.text
-    if check_day_payment_format(date_pay):
-        await state.update_data(date_payment=m.text)
-        notices = await get_notices_user(m.from_user.id)
-        list_notices = [notice['name_notice'] for notice in notices]
-        await m.answer(text='Выберете уведомление', reply_markup=kb_choice_notice(list_notices))
-        await state.set_state(FormAddPayment.notice_payment)
-    else:
-        await m.answer(text='Вы ввели не корректное число, попробуйте еще раз')
-        await state.set_state(FormAddPayment.date_payment)
+
+@add_payment_router.message(FormAddPayment.day_payment, DayPaymentFilter())
+async def accept_day_payment(m: Message, state: FSMContext):
+    await state.update_data(day_payment=m.text)
+    await request_notice(m, state)
 
 
-@add_payment_router.message(FormAddPayment.notice_payment)
-async def accept_notice(m: Message, state: FSMContext):
-    if m.text == 'Добавить новое':
-        await m.answer(text='Введите за сколько дней будет приходить уведомление\n\n'
-                            '<i>Например - если нужно присылать за два дня, то вводите 2</i>', reply_markup=ReplyKeyboardRemove())
-        await state.set_state(FormAddPayment.day_notice)
-        return
-    notice = await get_notice(m.from_user.id, m.text)
-    if notice:
-        info = await state.get_data()
-        name_pay = info.get('name_payment')
-        cost_pay = info.get('cost_payment')
-        date_pay = info.get('date_payment')
-        answer = await add_payment(m.from_user.id, notice.id, name_pay, int(cost_pay), int(date_pay))
-        if answer:
-            await m.answer(text='Вы успешно добавили платеж', reply_markup=ReplyKeyboardRemove())
-        else:
-            await m.answer(text='При создании произошла ошибка', reply_markup=ReplyKeyboardRemove())
-    else:
-        await m.answer(text='Такого уведомления у вас нет, попробуйте еще раз')
-        await state.set_state(FormAddPayment.notice_payment)
-        return
-    await state.clear()
-    await m.answer(text='Панель навигации', reply_markup=main_start_inline_kb())
-    
-@add_payment_router.message(FormAddPayment.day_notice)
-async def accept_day_notice(m: Message, state: FSMContext):
-    if check_day_notice_format(m.text):
-        await state.update_data(day_notice=m.text)
-        await m.answer(text=f'Введите время уведомления в формате час:минуты\n\n'
-                            f'<i>Например - {datetime.now().time().strftime("%H:%M")}</i>')
-        await state.set_state(FormAddPayment.time_notice)
-        return
-    await m.answer(text='Не корректно указан день, попробуйте еще раз')
-    await state.set_state(FormAddPayment.day_notice)
+async def request_notice(m: Message, state: FSMContext):
+    notices = await get_notices_user(m.from_user.id)
+    list_notices = [notice['name_notice'] for notice in notices]
+    await m.answer(text='Выберете уведомление', reply_markup=kb_choice_notice(list_notices))
+    await state.set_state(FormAddPayment.notice_payment)
 
 
-@add_payment_router.message(FormAddPayment.time_notice)
+@add_payment_router.message(FormAddPayment.notice_payment, ExistsNoticeFilter())
+async def accept_notice(m: Message, state: FSMContext, notice: Notice):
+    await add_payment_in_db(m, state, notice)
+
+
+@add_payment_router.message(FormAddPayment.notice_payment, F.text == 'Добавить новое')
+async def add_new_notice(m: Message, state: FSMContext):
+    await state.update_data(add_payment=True)
+    await request_day_before(m, state)
+
+
+@add_payment_router.message(FormAddPayment.time_notice, TimeNoticeFilter())
 async def accept_time_notice(m: Message, state: FSMContext):
-    if not check_time_format(m.text):
-        await m.answer(text='Не корректно указано время, попробуйте еще раз')
-        await state.set_state(FormAddPayment.time_notice)
-        return
     time_notice = m.text
     info = await state.get_data()
     day_notice = info.get('day_notice')
     creator = 'user'
     answer = await add_notice(m.from_user.id, int(day_notice), time_notice, creator)
-    if answer:
-        notice = await get_notice(m.from_user.id, f'за {day_notice} д в {time_notice}')
-        if notice:
-            info = await state.get_data()
-            name_pay = info.get('name_payment')
-            cost_pay = info.get('cost_payment')
-            date_pay = info.get('date_payment')
-            answer = await add_payment(m.from_user.id, notice.id, name_pay, int(cost_pay), int(date_pay))
-            if answer:
-                await m.answer(text='Вы успешно добавили платеж', reply_markup=ReplyKeyboardRemove())
-            else:
-                await m.answer(text='При создании произошла ошибка', reply_markup=ReplyKeyboardRemove())
-    else:
+    if not answer:
         await m.answer(text='Такое уведомление уже есть')
-        notices = await get_notices_user(m.from_user.id)
-        list_notices = [notice['name_notice'] for notice in notices]
-        await m.answer(text='Выберете уведомление', reply_markup=kb_choice_notice(list_notices))
-        await state.set_state(FormAddPayment.notice_payment)
+        await request_notice(m, state)
         return
+    notice = await get_notice(m.from_user.id, f'за {day_notice} д в {time_notice}')
+    await add_payment_in_db(m, state, notice)
+
+
+async def add_payment_in_db(m: Message, state: FSMContext, notice: Notice):
+    info = await state.get_data()
+    name_pay = info.get('name_payment')
+    cost_pay = info.get('cost_payment')
+    day_pay = info.get('day_payment')
+    answer = await add_payment(m.from_user.id, notice.id, name_pay, int(cost_pay), int(day_pay))
+    if answer:
+        await m.answer(text='Вы успешно добавили платеж', reply_markup=ReplyKeyboardRemove())
+    else:
+        await m.answer(text='При создании произошла ошибка', reply_markup=ReplyKeyboardRemove())
     await state.clear()
     await m.answer(text='Панель навигации', reply_markup=main_start_inline_kb())
+
+
+# Ниже ловим ошибки при вводе
+
+@add_payment_router.message(FormAddPayment.name_payment, ExistsPaymentFilter())
+async def error_accept_name_payment(m: Message, state: FSMContext):
+    await m.answer(text='Платеж с таким названием уже есть, попробуйте еще раз')
+    await state.set_state(FormAddPayment.name_payment)
+
+
+@add_payment_router.message(FormAddPayment.name_payment)
+@add_payment_router.message(FormAddPayment.cost_payment)
+@add_payment_router.message(FormAddPayment.day_payment)
+@add_payment_router.message(FormAddPayment.notice_payment)
+@add_payment_router.message(FormAddPayment.time_notice)
+async def error_data(m: Message, state: FSMContext):
+    await m.answer(text='Не корректные данные, попробуйте еще раз')
+    current_state = await state.get_state()
+    await state.set_state(current_state)

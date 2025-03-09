@@ -1,14 +1,14 @@
 from datetime import datetime
 
 from aiogram import Router, F, Bot
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
 from src.db.Notice_db.add_notice_db import add_notice
 from src.filters.day_before_fillter import DayBeforeFilter
 from src.filters.time_notice_filter import TimeNoticeFilter
 from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
-from src.states.all_states import FormAddNotice
+from src.states.all_states import FormAddNotice, FormAddPayment, FormEditPayment
 
 add_notice_router = Router()
 
@@ -21,7 +21,7 @@ async def call_new_notice(call: CallbackQuery, state: FSMContext, bot: Bot):
 
 async def request_day_before(m: Message, state: FSMContext):
     await m.answer(text='Введите за сколько дней будет приходить уведомление\n\n'
-                        '<i>Например - если нужно присылать за два дня, то вводите 2</i>')
+                        '<i>Например - если нужно присылать за два дня, то вводите 2</i>', reply_markup=ReplyKeyboardRemove())
     await state.set_state(FormAddNotice.day_notice)
 
 
@@ -32,9 +32,9 @@ async def request_time_notice(m: Message, state: FSMContext):
                         f'<i>Например - {datetime.now().time().strftime("%H:%M")}</i>')
     data = await state.get_data()
     if data.get('add_payment'):
-        pass
+        await state.set_state(FormAddPayment.time_notice)
     elif data.get('edit_payment'):
-        pass
+        await state.set_state(FormEditPayment.time_notice)
     else:
         await state.set_state(FormAddNotice.time_notice)
 

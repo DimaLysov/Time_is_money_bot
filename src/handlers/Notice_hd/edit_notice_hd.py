@@ -7,9 +7,10 @@ from aiogram.fsm.context import FSMContext
 from src.db.Notice_db.delete_notice_db import delete_notice
 from src.db.Notice_db.edit_notice_data_db import edit_notice_data
 from src.db.Notice_db.get_notice_db import get_notice
+from src.db.models import Notice
 from src.filters.all_available_notices_filter import AllAvailableNoticeFilter
 from src.filters.day_before_fillter import DayBeforeFilter
-from src.filters.exits_notice_filter import ExistsNoticeFilter
+from src.filters.exists_notice_filter import ExistsNoticeFilter
 from src.filters.time_notice_filter import TimeNoticeFilter
 from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
 from src.keyboards.line_kb.utils_line_kb import kb_list_data, kb_edit_delete, kb_all_notice_data
@@ -27,16 +28,20 @@ async def call_edit_notice(call: CallbackQuery, state: FSMContext, bot: Bot, lis
 
 
 @edit_notice_router.message(FormEditNotice.select_notice, ExistsNoticeFilter())
-async def request_select_act(m: Message, state: FSMContext):
-    await state.update_data(select_notice=m.text)
-    await m.answer(text='Что вы хотите сделать?', reply_markup=kb_edit_delete())
-    await state.set_state(FormEditNotice.select_act)
+async def request_select_act(m: Message, state: FSMContext, notice: Notice):
+    if notice.creator != 'bot':
+        await state.update_data(select_notice=m.text)
+        await m.answer(text='Что вы хотите сделать?', reply_markup=kb_edit_delete())
+        await state.set_state(FormEditNotice.select_act)
+    else:
+        await m.answer(text='Вы не можете изменять стандартное уведомление')
+        await state.set_state(FormEditNotice.select_notice)
 
 
 @edit_notice_router.message(FormEditNotice.select_act, F.text == 'Удалить')
 async def accept_delete_act(m: Message, state: FSMContext):
     await m.answer(text='Вы точно хотите удалить уведомление?\n\n'
-                        'У всех платежей с данным уведомлением установиться ваше активное уведомление\n\n'
+                        'У всех платежей с данным уведомлением установиться стандартное уведомление\n\n'
                         '<i>Для подтверждения введите "да"</i>', reply_markup=ReplyKeyboardRemove())
     await state.set_state(FormEditNotice.verif_delete)
 
@@ -131,37 +136,12 @@ async def accept_verif_delete(m: Message, state: FSMContext):
     await m.answer(text='Панель навигации', reply_markup=main_start_inline_kb())
 
 
-# @edit_notice_router.message(FormEditNotice.__all_states__)
-# async def input_error(m: Message, state: FSMContext):
-#     await m.answer(text='Данные не соответствуют ожидаемому формату, попробуйте еще раз')
-#     current_state = await state.get_state()
-#     await state.set_state(current_state)
-
 @edit_notice_router.message(FormEditNotice.select_notice)
-async def error_accept_select_notice(m: Message, state: FSMContext):
-    await m.answer(text='Такого уведомления у вас нет, попробуйте еще раз')
-    await state.set_state(FormEditNotice.select_notice)
-
-
 @edit_notice_router.message(FormEditNotice.select_act)
-async def error_accept_act(m: Message, state: FSMContext):
-    await m.answer(text='Я не знаю такой команды, попробуйте еще раз')
-    await state.set_state(FormEditNotice.select_act)
-
-
 @edit_notice_router.message(FormEditNotice.select_edit_data)
-async def error_accept_edit_data(m: Message, state: FSMContext):
-    await m.answer(text='Не известные данные, попробуйте еще раз')
-    await state.set_state(FormEditNotice.select_edit_data)
-
-
 @edit_notice_router.message(FormEditNotice.new_day_before)
-async def accept_new_day_before(m: Message, state: FSMContext):
-    await m.answer(text='День введен не корректно, попробуйте еще раз')
-    await state.set_state(FormEditNotice.new_day_before)
-
-
 @edit_notice_router.message(FormEditNotice.new_time_notice)
-async def accept_new_time_notice(m: Message, state: FSMContext):
-    await m.answer(text='Время введено не корректно, попробуйте еще раз')
-    await state.set_state(FormEditNotice.new_time_notice)
+async def input_error(m: Message, state: FSMContext):
+    await m.answer(text='Данные не соответствуют ожидаемому формату, попробуйте еще раз')
+    current_state = await state.get_state()
+    await state.set_state(current_state)

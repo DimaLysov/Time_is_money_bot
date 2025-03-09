@@ -11,15 +11,15 @@ async def get_data_time(now_day, now_time, days_in_month):
         .join(Notice, Payment.notice_id == Notice.id)
         .filter(and_(
                     case(
-                (Payment.payment_date > days_in_month, days_in_month),
-                        (Payment.payment_date <= Notice.day_before, days_in_month + Payment.payment_date),
-                        else_=Payment.payment_date) - Notice.day_before == now_day,
+                (Payment.payment_day > days_in_month, days_in_month),
+                        (Payment.payment_day <= Notice.day_before, days_in_month + Payment.payment_day),
+                        else_=Payment.payment_day) - Notice.day_before == now_day,
                     Notice.time_send == now_time
                     )
                 )
         )
         # .filter(and_(
-        #     Payment.payment_date - Notice.day_before == now_day,
+        #     Payment.payment_day - Notice.day_before == now_day,
         #     Notice.time_send == now_time
         # )))
 
@@ -30,7 +30,7 @@ async def get_data_time(now_day, now_time, days_in_month):
                 'chat_id': user.chat_id,
                 'name_payment': payment.name_payment,
                 'cost_payment': payment.cost_payment,
-                'pyment_date': payment.payment_date,
+                'pyment_date': payment.payment_day,
                 'day_before': notice.day_before,
                 'time_send': notice.time_send,
             }
