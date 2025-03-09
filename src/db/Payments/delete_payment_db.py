@@ -1,8 +1,8 @@
 from sqlalchemy import select, and_
 
-from src.db.Users.get_user_id_db import get_user_id
-from src.db.models import async_session
-from src.db.models import Payment, Notice
+from db.Users.get_user_id_db import get_user_id
+from db.models import async_session
+from db.models import Payment, Notice
 
 
 async def delete_payment(chat_id: int, name_payment: str):

@@ -2,25 +2,25 @@ from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from src.db.Notice_db.add_notice_db import add_notice
-from src.db.Notice_db.get_all_notices_person import get_notices_user
-from src.db.Notice_db.get_notice_db import get_notice
-from src.db.Payments.get_payment_db import get_payment
-from src.db.Payments.delete_payment_db import delete_payment
-from src.db.Payments.edit_payment_db import edit_date_payment
-from src.db.models import Notice, Payment
-from src.filters.all_avaiable_payment_filter import AllAvailablePaymentFilter
-from src.filters.cost_payment_filter import CostPaymentFilter
-from src.filters.day_payment_filter import DayPaymentFilter
-from src.filters.exists_notice_filter import ExistsNoticeFilter
-from src.filters.exists_payment_filter import ExistsPaymentFilter
-from src.filters.not_none_filter import NotNoneFilter
-from src.filters.time_notice_filter import TimeNoticeFilter
-from src.handlers.Notice_hd.add_notice_hd import request_day_before
-from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
-from src.keyboards.line_kb.utils_line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data, kb_choice_notice
-from src.states.all_states import FormEditPayment
-from src.utils.view_info import view_info_payment
+from db.Notice_db.add_notice_db import add_notice
+from db.Notice_db.get_all_notices_person import get_notices_user
+from db.Notice_db.get_notice_db import get_notice
+from db.Payments.get_payment_db import get_payment
+from db.Payments.delete_payment_db import delete_payment
+from db.Payments.edit_payment_db import edit_date_payment
+from db.models import Notice, Payment
+from filters.all_avaiable_payment_filter import AllAvailablePaymentFilter
+from filters.cost_payment_filter import CostPaymentFilter
+from filters.day_payment_filter import DayPaymentFilter
+from filters.exists_notice_filter import ExistsNoticeFilter
+from filters.exists_payment_filter import ExistsPaymentFilter
+from filters.not_none_filter import NotNoneFilter
+from filters.time_notice_filter import TimeNoticeFilter
+from handlers.Notice_hd.add_notice_hd import request_day_before
+from keyboards.inline_kb.menu_kb import main_start_inline_kb
+from keyboards.line_kb.utils_line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data, kb_choice_notice
+from states.all_states import FormEditPayment
+from utils.view_info import view_info_payment
 
 edit_payment_router = Router()
 

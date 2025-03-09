@@ -5,22 +5,22 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
-from src.create_bot import bot
-from src.db.Notice_db.add_notice_db import add_notice
-from src.db.Notice_db.get_all_notices_person import get_notices_user
-from src.db.Notice_db.get_notice_db import get_notice
-from src.db.Payments.add_payments_db import add_payment
-from src.db.models import Notice
-from src.filters.cost_payment_filter import CostPaymentFilter
-from src.filters.day_payment_filter import DayPaymentFilter
-from src.filters.exists_notice_filter import ExistsNoticeFilter
-from src.filters.exists_payment_filter import ExistsPaymentFilter
-from src.filters.not_none_filter import NotNoneFilter
-from src.filters.time_notice_filter import TimeNoticeFilter
-from src.handlers.Notice_hd.add_notice_hd import request_day_before
-from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
-from src.keyboards.line_kb.utils_line_kb import kb_choice_notice
-from src.states.all_states import FormAddPayment
+from create_bot import bot
+from db.Notice_db.add_notice_db import add_notice
+from db.Notice_db.get_all_notices_person import get_notices_user
+from db.Notice_db.get_notice_db import get_notice
+from db.Payments.add_payments_db import add_payment
+from db.models import Notice
+from filters.cost_payment_filter import CostPaymentFilter
+from filters.day_payment_filter import DayPaymentFilter
+from filters.exists_notice_filter import ExistsNoticeFilter
+from filters.exists_payment_filter import ExistsPaymentFilter
+from filters.not_none_filter import NotNoneFilter
+from filters.time_notice_filter import TimeNoticeFilter
+from handlers.Notice_hd.add_notice_hd import request_day_before
+from keyboards.inline_kb.menu_kb import main_start_inline_kb
+from keyboards.line_kb.utils_line_kb import kb_choice_notice
+from states.all_states import FormAddPayment
 
 add_payment_router = Router()
 

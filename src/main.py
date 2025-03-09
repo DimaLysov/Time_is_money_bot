@@ -3,7 +3,7 @@ import asyncio
 from create_bot import bot, dp
 from db.models import async_main
 from handlers import routers
-from src.worker import infinity_worker
+from worker import infinity_worker
 
 
 async def main():

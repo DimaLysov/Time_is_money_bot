@@ -1,8 +1,8 @@
 from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery
 
-from src.db.Notice_db.get_all_notices_person import get_notices_user
-from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
+from db.Notice_db.get_all_notices_person import get_notices_user
+from keyboards.inline_kb.menu_kb import main_start_inline_kb
 
 view_notice_router = Router()
 

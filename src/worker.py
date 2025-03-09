@@ -1,8 +1,8 @@
 import calendar
 from datetime import datetime, time
 import asyncio
-from src.create_bot import bot
-from src.db.Payments.get_data_time_db import get_data_time
+from create_bot import bot
+from db.Payments.get_data_time_db import get_data_time
 
 
 async def infinity_worker():

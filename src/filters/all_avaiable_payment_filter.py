@@ -1,7 +1,7 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 
-from src.db.Payments.get_all_payment_person_db import get_payments_user
+from db.Payments.get_all_payment_person_db import get_payments_user
 
 
 class AllAvailablePaymentFilter(BaseFilter):

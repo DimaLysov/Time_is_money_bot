@@ -1,8 +1,8 @@
 from sqlalchemy import select, and_
 
-from src.db.Users.get_user_id_db import get_user_id
-from src.db.models import async_session
-from src.db.models import Payment
+from db.Users.get_user_id_db import get_user_id
+from db.models import async_session
+from db.models import Payment
 
 
 async def edit_date_payment(chat_id: int, now_name: str, edit_data: str, new_value):

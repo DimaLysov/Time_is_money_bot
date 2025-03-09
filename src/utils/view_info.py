@@ -1,7 +1,7 @@
 from aiogram.types import Message
 
-from src.db.Notice_db.get_notice_db import get_notice
-from src.db.models import Payment
+from db.Notice_db.get_notice_db import get_notice
+from db.models import Payment
 
 
 async def view_info_payment(m: Message, payment: Payment):

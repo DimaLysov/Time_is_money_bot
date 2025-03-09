@@ -4,17 +4,17 @@ from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from src.db.Notice_db.delete_notice_db import delete_notice
-from src.db.Notice_db.edit_notice_data_db import edit_notice_data
-from src.db.Notice_db.get_notice_db import get_notice
-from src.db.models import Notice
-from src.filters.all_available_notices_filter import AllAvailableNoticeFilter
-from src.filters.day_before_fillter import DayBeforeFilter
-from src.filters.exists_notice_filter import ExistsNoticeFilter
-from src.filters.time_notice_filter import TimeNoticeFilter
-from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
-from src.keyboards.line_kb.utils_line_kb import kb_list_data, kb_edit_delete, kb_all_notice_data
-from src.states.all_states import FormEditNotice
+from db.Notice_db.delete_notice_db import delete_notice
+from db.Notice_db.edit_notice_data_db import edit_notice_data
+from db.Notice_db.get_notice_db import get_notice
+from db.models import Notice
+from filters.all_available_notices_filter import AllAvailableNoticeFilter
+from filters.day_before_fillter import DayBeforeFilter
+from filters.exists_notice_filter import ExistsNoticeFilter
+from filters.time_notice_filter import TimeNoticeFilter
+from keyboards.inline_kb.menu_kb import main_start_inline_kb
+from keyboards.line_kb.utils_line_kb import kb_list_data, kb_edit_delete, kb_all_notice_data
+from states.all_states import FormEditNotice
 
 edit_notice_router = Router()
 

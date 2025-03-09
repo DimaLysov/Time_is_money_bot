@@ -2,9 +2,9 @@ from datetime import datetime
 
 from sqlalchemy import select, and_
 
-from src.db.Users.get_user_id_db import get_user_id
-from src.db.models import async_session
-from src.db.models import Notice
+from db.Users.get_user_id_db import get_user_id
+from db.models import async_session
+from db.models import Notice
 
 
 async def edit_notice_data(chat_id: int, name_notice: str, edit_data: str, new_value):

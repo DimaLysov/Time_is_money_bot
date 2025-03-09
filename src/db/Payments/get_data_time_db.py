@@ -1,7 +1,7 @@
 from sqlalchemy import select, and_, case
 
-from src.db.models import async_session
-from src.db.models import Payment, User, Notice
+from db.models import async_session
+from db.models import Payment, User, Notice
 
 
 async def get_data_time(now_day, now_time, days_in_month):

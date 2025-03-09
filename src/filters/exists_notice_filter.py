@@ -1,8 +1,8 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 
-from src.db.Notice_db.get_notice_db import get_notice
-from src.db.models import Notice
+from db.Notice_db.get_notice_db import get_notice
+from db.models import Notice
 
 
 class ExistsNoticeFilter(BaseFilter):

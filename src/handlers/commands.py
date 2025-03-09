@@ -3,9 +3,9 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from src.create_bot import bot
-from src.db.Users.user_regisration_db import registration
-from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
+from create_bot import bot
+from db.Users.user_regisration_db import registration
+from keyboards.inline_kb.menu_kb import main_start_inline_kb
 
 commands_router = Router()
 

@@ -2,9 +2,9 @@ from datetime import datetime
 
 from sqlalchemy import select, and_
 
-from src.db.Notice_db.add_notice_db import add_notice
-from src.db.models import async_session
-from src.db.models import User
+from db.Notice_db.add_notice_db import add_notice
+from db.models import async_session
+from db.models import User
 
 
 async def registration(chat_id: int, user_name: str):

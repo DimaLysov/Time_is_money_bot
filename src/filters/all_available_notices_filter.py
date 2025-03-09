@@ -1,7 +1,7 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 
-from src.db.Notice_db.get_all_notices_person import get_notices_user
+from db.Notice_db.get_all_notices_person import get_notices_user
 
 
 class AllAvailableNoticeFilter(BaseFilter):

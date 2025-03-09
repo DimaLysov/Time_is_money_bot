@@ -1,9 +1,9 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
-from src.create_bot import bot
-from src.db.Payments.get_all_payment_person_db import get_payments_user
-from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
+from create_bot import bot
+from db.Payments.get_all_payment_person_db import get_payments_user
+from keyboards.inline_kb.menu_kb import main_start_inline_kb
 
 view_all_payment_router = Router()
 

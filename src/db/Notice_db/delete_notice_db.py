@@ -1,9 +1,9 @@
 from sqlalchemy import select, and_
 
-from src.db.Payments.change_notice_payments_db import change_notice_payments
-from src.db.Users.get_user_id_db import get_user_id
-from src.db.models import async_session
-from src.db.models import Notice
+from db.Payments.change_notice_payments_db import change_notice_payments
+from db.Users.get_user_id_db import get_user_id
+from db.models import async_session
+from db.models import Notice
 
 
 async def delete_notice(chat_id: int, name_notice: str):

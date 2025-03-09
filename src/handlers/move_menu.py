@@ -1,7 +1,7 @@
 from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery
 
-from src.keyboards.inline_kb.menu_kb import main_start_inline_kb, payments_inline_kb, notice_inline_kb
+from keyboards.inline_kb.menu_kb import main_start_inline_kb, payments_inline_kb, notice_inline_kb
 
 move_menu_router = Router()
 

@@ -1,8 +1,8 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 
-from src.db.Payments.get_payment_db import get_payment
-from src.db.models import Payment
+from db.Payments.get_payment_db import get_payment
+from db.models import Payment
 
 
 class ExistsPaymentFilter(BaseFilter):

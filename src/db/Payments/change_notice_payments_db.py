@@ -1,8 +1,8 @@
 from sqlalchemy import select, and_, update
 
-from src.db.Users.get_user_id_db import get_user_id
-from src.db.models import async_session
-from src.db.models import Payment
+from db.Users.get_user_id_db import get_user_id
+from db.models import async_session
+from db.models import Payment
 
 
 async def change_notice_payments(chat_id: int, old_notice_id: int, new_notice_id: int):

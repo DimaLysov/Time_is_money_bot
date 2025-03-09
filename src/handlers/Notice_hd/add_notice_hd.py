@@ -4,11 +4,11 @@ from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from src.db.Notice_db.add_notice_db import add_notice
-from src.filters.day_before_fillter import DayBeforeFilter
-from src.filters.time_notice_filter import TimeNoticeFilter
-from src.keyboards.inline_kb.menu_kb import main_start_inline_kb
-from src.states.all_states import FormAddNotice, FormAddPayment, FormEditPayment
+from db.Notice_db.add_notice_db import add_notice
+from filters.day_before_fillter import DayBeforeFilter
+from filters.time_notice_filter import TimeNoticeFilter
+from keyboards.inline_kb.menu_kb import main_start_inline_kb
+from states.all_states import FormAddNotice, FormAddPayment, FormEditPayment
 
 add_notice_router = Router()
 

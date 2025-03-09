@@ -8,8 +8,8 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY scr /app/scr
+COPY src /app/src
 
 EXPOSE 8000
 
-CMD ["python", "scr/main.py"]
+CMD ["python", "src/main.py"]
