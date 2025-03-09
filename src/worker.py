@@ -12,7 +12,6 @@ async def infinity_worker():
         now_day = now_date.date().day
         days_in_month = calendar.monthrange(now_date.year, now_date.month)[1]
         answer = await get_data_time(now_day, now_time, days_in_month)
-        print(now_day, days_in_month, now_time, datetime.now().time())
         if answer:
             for data in answer:
                 print(data)
