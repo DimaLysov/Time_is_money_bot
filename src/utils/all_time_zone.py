@@ -1,0 +1,11 @@
+rus_time_zone = {'MSK-1': 'Europe/Kaliningrad',
+                 'MSK+0': 'Europe/Moscow',
+                 'MSK+1': 'Europe/Samara',
+                 'MSK+2': 'Asia/Yekaterinburg',
+                 'MSK+3': 'Asia/Omsk',
+                 'MSK+4': 'Asia/Krasnoyarsk',
+                 'MSK+5': 'Asia/Irkutsk',
+                 'MSK+6': 'Asia/Yakutsk',
+                 'MSK+7': 'Asia/Vladivostok',
+                 'MSK+8': 'Asia/Srednekolymsk',
+                 'MSK+9': 'Asia/Kamchatka'}

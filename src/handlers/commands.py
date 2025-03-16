@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from create_bot import bot
 from db.Users.user_regisration_db import registration
+from handlers.time_zone_hd import request_time_zone
 from keyboards.inline_kb.menu_kb import main_start_inline_kb
 
 commands_router = Router()
@@ -12,10 +13,12 @@ commands_router = Router()
 @commands_router.message(CommandStart())
 async def cmd_start(m: Message, state: FSMContext):
     await state.clear()
-    await registration(m.from_user.id, m.from_user.username)
+    answer = await registration(m.from_user.id, m.from_user.username)
     await m.answer(text='Добро пожаловать.\n\n'
                         'Данный бот поможет вам своевременно оплачивать ваши ежемесячные подписки и другие платежи\n\n'
-                        'Чтобы открыть меню бота нажмите сюда ️ 👉 <b>/menu</b>')
+                        'Чтобы открыть меню бота нажмите сюда ️ 👉 <b>/menu</b>\n\n')
+    if answer:
+        await request_time_zone(m)
 
 
 @commands_router.message(Command('menu'))

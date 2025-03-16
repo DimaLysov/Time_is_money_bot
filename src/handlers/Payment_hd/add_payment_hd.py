@@ -1,11 +1,7 @@
-from datetime import datetime
-
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
-from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
-from create_bot import bot
 from db.Notice_db.add_notice_db import add_notice
 from db.Notice_db.get_all_notices_person import get_notices_user
 from db.Notice_db.get_notice_db import get_notice
@@ -26,7 +22,7 @@ add_payment_router = Router()
 
 
 @add_payment_router.callback_query(F.data == 'new_payment_call')
-async def call_add_payment(call: CallbackQuery, state: FSMContext):
+async def call_add_payment(call: CallbackQuery, state: FSMContext, bot: Bot):
     await bot.delete_message(call.from_user.id, call.message.message_id)
     await call.message.answer(text='Введите название нового платежа')
     await state.set_state(FormAddPayment.name_payment)

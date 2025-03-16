@@ -8,7 +8,7 @@ from db.Payments.get_data_time_db import get_data_time
 async def infinity_worker():
     while True:
         now_date = datetime.now()
-        now_time = time(now_date.time().hour + 3, now_date.time().minute, 0)
+        now_time = time(now_date.time().hour, now_date.time().minute, 0)
         now_day = now_date.date().day
         days_in_month = calendar.monthrange(now_date.year, now_date.month)[1]
         answer = await get_data_time(now_day, now_time, days_in_month)

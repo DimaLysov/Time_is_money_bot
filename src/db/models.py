@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, String, ForeignKey, Column, Integer, Date, Time, Boolean
+from sqlalchemy import BigInteger, String, ForeignKey, Column, Integer, Date, Time, Boolean, MetaData
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from src.config import DATABASE_URL
@@ -8,6 +8,7 @@ async_session = async_sessionmaker(engine)
 
 
 class Base(AsyncAttrs, DeclarativeBase):
+    metadata = MetaData()
     pass
 
 
@@ -17,6 +18,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     chat_id = Column(BigInteger, unique=True)
     user_name = Column(String)
+    time_zone = Column(String, default='MSK+0')
 
 
 class Notice(Base):
@@ -27,7 +29,6 @@ class Notice(Base):
     name_notice = Column(String)
     day_before = Column(Integer)
     time_send = Column(Time)
-    #period = Column(Time, default=None)
     creator = Column(String)
 
 
@@ -41,8 +42,8 @@ class Payment(Base):
     cost_payment = Column(Integer)
     payment_day = Column(Integer)
 
-
-async def async_main():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-        print('database is active')
+#
+# async def async_main():
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
+#         print('database is active')
