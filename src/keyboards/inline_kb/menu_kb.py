@@ -39,9 +39,9 @@ def time_zone_kb():
         builder.row(InlineKeyboardButton(text=f'{time}', callback_data=f'tz_{time}'))
     return builder.as_markup()
 
-def yes_kb():
+def yes_no_kb(name_calling_file):
     inline_kb_list = [
-        [InlineKeyboardButton(text='Да', callback_data='yes_call'),
-         InlineKeyboardButton(text='Нет', callback_data='no_call')]
+        [InlineKeyboardButton(text='Да', callback_data=f'yes_call_{name_calling_file}'),
+         InlineKeyboardButton(text='Нет', callback_data=f'no_call_{name_calling_file}')]
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)

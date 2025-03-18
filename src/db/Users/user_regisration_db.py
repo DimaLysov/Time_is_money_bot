@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from sqlalchemy import select, and_
 
 from db.Notice_db.add_notice_db import add_notice

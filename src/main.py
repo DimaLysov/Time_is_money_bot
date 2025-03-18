@@ -1,13 +1,13 @@
 import asyncio
 
 from create_bot import bot, dp
-# from db.models import async_main
+from db.models import async_main
 from handlers import routers
 from worker import infinity_worker
 
 
 async def main():
-    # await async_main()
+    await async_main()
     for router in routers:
         dp.include_router(router)
     print('bot ready')

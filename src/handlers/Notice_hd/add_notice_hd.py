@@ -1,14 +1,17 @@
 from datetime import datetime
 
+import pytz
 from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
 from db.Notice_db.add_notice_db import add_notice
+from db.Users.get_user_db import get_user
 from filters.day_before_fillter import DayBeforeFilter
 from filters.time_notice_filter import TimeNoticeFilter
 from keyboards.inline_kb.menu_kb import main_start_inline_kb
 from states.all_states import FormAddNotice, FormAddPayment, FormEditPayment
+from utils.all_time_zone import rus_time_zone
 
 add_notice_router = Router()
 
@@ -28,8 +31,9 @@ async def request_day_before(m: Message, state: FSMContext):
 @add_notice_router.message(FormAddNotice.day_notice, DayBeforeFilter())
 async def request_time_notice(m: Message, state: FSMContext):
     await state.update_data(day_notice=m.text)
+    user = await get_user(m.from_user.id)
     await m.answer(text=f'Введите время уведомления в формате час:минуты\n\n'
-                        f'<i>Например - {datetime.now().time().strftime("%H:%M")}</i>')
+                        f'<i>Например - {datetime.now(pytz.timezone(rus_time_zone[user.time_zone])).time().strftime("%H:%M")}</i>')
     data = await state.get_data()
     if data.get('add_payment'):
         await state.set_state(FormAddPayment.time_notice)

@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from db.Users.edit_time_zone_db import edit_time_zone
 from db.Users.get_user_db import get_user
-from keyboards.inline_kb.menu_kb import time_zone_kb, main_start_inline_kb, yes_kb
+from keyboards.inline_kb.menu_kb import time_zone_kb, main_start_inline_kb, yes_no_kb
 
 time_zone_router = Router()
 
@@ -15,15 +15,15 @@ async def call_time_zone(call: CallbackQuery, bot: Bot):
     await bot.delete_message(call.from_user.id, call.message.message_id)
     user = await get_user(call.from_user.id)
     await call.message.answer(text=f'Ваша временная зона: {user.time_zone}\n\n')
-    await call.message.answer(text=f'Хотите изменить?', reply_markup=yes_kb())
+    await call.message.answer(text=f'Хотите изменить?', reply_markup=yes_no_kb('time_zone_hd.py'))
 
-@time_zone_router.callback_query(F.data == 'no_call')
+@time_zone_router.callback_query(F.data == 'no_call_time_zone_hd.py')
 async def call_edit_time_zone(call: CallbackQuery, bot: Bot):
     await bot.delete_message(call.from_user.id, call.message.message_id)
     await call.message.answer(text='Панель навигации', reply_markup=main_start_inline_kb())
 
 
-@time_zone_router.callback_query(F.data == 'yes_call')
+@time_zone_router.callback_query(F.data == 'yes_call_time_zone_hd.py')
 async def call_edit_time_zone(call: CallbackQuery, bot: Bot):
     await bot.delete_message(call.from_user.id, call.message.message_id)
     await request_time_zone(call.message)

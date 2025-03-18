@@ -1,7 +1,7 @@
 from sqlalchemy import BigInteger, String, ForeignKey, Column, Integer, Date, Time, Boolean, MetaData
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
-from src.config import DATABASE_URL
+from config import DATABASE_URL
 
 engine = create_async_engine(url=DATABASE_URL)
 async_session = async_sessionmaker(engine)
@@ -42,8 +42,8 @@ class Payment(Base):
     cost_payment = Column(Integer)
     payment_day = Column(Integer)
 
-#
-# async def async_main():
-#     async with engine.begin() as conn:
-#         await conn.run_sync(Base.metadata.create_all)
-#         print('database is active')
+
+async def async_main():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        print('database is active')

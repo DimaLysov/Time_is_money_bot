@@ -17,7 +17,7 @@ from filters.exists_payment_filter import ExistsPaymentFilter
 from filters.not_none_filter import NotNoneFilter
 from filters.time_notice_filter import TimeNoticeFilter
 from handlers.Notice_hd.add_notice_hd import request_day_before
-from keyboards.inline_kb.menu_kb import main_start_inline_kb
+from keyboards.inline_kb.menu_kb import main_start_inline_kb, yes_no_kb
 from keyboards.line_kb.utils_line_kb import kb_list_data, kb_edit_delete, kb_all_payment_data, kb_choice_notice
 from states.all_states import FormEditPayment
 from utils.view_info import view_info_payment
@@ -44,22 +44,28 @@ async def accept_select_payment(m: Message, state: FSMContext, payment: Payment)
 
 @edit_payment_router.message(FormEditPayment.select_act, F.text == 'Удалить')
 async def accept_select_act(m: Message, state: FSMContext):
-    await m.answer(text='Вы точно хотите удалить платеж?\n'
-                        '<i>(Для подтверждения введите "да"</i>)', reply_markup=ReplyKeyboardRemove())
+    await m.answer(text='Вы точно хотите удалить платеж?', reply_markup=ReplyKeyboardRemove())
+    await m.answer(text='Подтверждение', reply_markup=yes_no_kb('edit_payment_hd.py'))
     await state.set_state(FormEditPayment.verif_delete)
 
 
-@edit_payment_router.message(FormEditPayment.verif_delete, F.text.lower() == 'да')
-async def check_verif_delete(m: Message, state: FSMContext):
+@edit_payment_router.callback_query(F.data == 'yes_call_edit_payment_hd.py')
+async def check_verif_delete(call: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     payment = data.get('select_payment')
-    answer = await delete_payment(m.from_user.id, payment)
+    answer = await delete_payment(call.from_user.id, payment)
     if answer:
-        await m.answer(text='Вы успешно удалил платеж')
+        await call.message.answer(text='Вы успешно удалил платеж')
     else:
-        await m.answer(text='При удаление произошла ошибка')
+        await call.message.answer(text='При удаление произошла ошибка')
     await state.clear()
-    await m.answer(text='Панель навигации', reply_markup=main_start_inline_kb())
+    await call.message.answer(text='Панель навигации', reply_markup=main_start_inline_kb())
+
+@edit_payment_router.callback_query(F.data == 'no_call_edit_payment_hd.py')
+async def undo_delete(call: CallbackQuery, state: FSMContext):
+    await call.message.answer(text='Удаление отклонено')
+    await call.message.answer(text='Что вы хотите сделать?', reply_markup=kb_edit_delete())
+    await state.set_state(FormEditPayment.select_act)
 
 
 @edit_payment_router.message(FormEditPayment.select_act, F.text == 'Изменить')

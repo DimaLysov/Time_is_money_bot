@@ -4,7 +4,7 @@ from db.models import async_session
 from db.models import Payment, User, Notice
 
 
-async def get_data_time(now_day, now_time, days_in_month):
+async def get_data_time(now_day, now_time, days_in_month, time_zone):
     async with async_session() as session:
         result = await session.execute(select(Payment, User, Notice)
         .join(User, Payment.user_id == User.id)
@@ -14,7 +14,8 @@ async def get_data_time(now_day, now_time, days_in_month):
                 (Payment.payment_day > days_in_month, days_in_month),
                         (Payment.payment_day <= Notice.day_before, days_in_month + Payment.payment_day),
                         else_=Payment.payment_day) - Notice.day_before == now_day,
-                    Notice.time_send == now_time
+                    Notice.time_send == now_time,
+                    User.time_zone == time_zone
                     )
                 )
         )
